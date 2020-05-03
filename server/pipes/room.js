@@ -23,21 +23,11 @@ const Room = class {
                     return -1
                 return 0
             }).map(user => user.username),
-            turnIndex: 0
+            turnIndex: 0,
+            changes: []
         }
-        this.stats = {}
-        this.meta.connected.forEach(o => {
-            const user = getUser(o.username)
-            this.stats[o.username] = {
-                health: user.armor.hp + 0,
-                attack: user.weapon.attack + 0,
-                speed: user.armor.speed,
-                effects: []
-            }
-        })
-        /*username: {
-                 health, attack, speed
-          } */
+        this.teamA = [que.connected[0].username]
+        this.teamB = [que.connected[1].username]
     }
 
     userData() {
@@ -48,13 +38,14 @@ const Room = class {
     uiData(username) {
         const user = getUser(username)
         const health = {}
-        Object.keys(this.stats).forEach(username => health[username] = this.stats[username].health)
+        this.meta.connected.forEach(o => health[o.username] = getUser(o.username).stats.health)
+
         return {
             abilityNames: [
                 user.weapon.ability.name,
                 user.armor.ability.name,
             ],
-            health
+            health,
         }
     }
 
@@ -65,12 +56,15 @@ const Room = class {
 
     packet(username) {
         this.data.userPackets = this.userData()
+        const team = this.teamA.includes(username) ? 0 : 1
         return {
             packet: 'room',
             data: this.data,
             username,
             uiData: this.uiData(username),
-            stats: this.stats
+            stats: this.stats,
+            teams: [this.teamA, this.teamB],
+            team
         }
     }
 }
@@ -143,14 +137,46 @@ const leaveQue = username => {
         RoomPipe[user.roomId].val().disconnect(username)
     return {msg: 'User removed from any que or active room.', error: false}
 }
+
+const doWeaponEffect = (room, caster, target, effect) => data.EffectFn[nospace(effect.name)](room, caster, target)
+
 const ability = (username, target, abilityName) => {
     const user = getUser(username)
+    const targetUser = getUser(target)
     const room = RoomPipe[user.roomId].val()
+    console.log(abilityName)
     const ability = data.Ability[nospace(abilityName)]
-    const enemy = room.stats[target].effects.append(ability.effects)
+    ability.effects.forEach(effect => effect.ability = nospace(ability.name))
+    targetUser.stats.effects = targetUser.stats.effects.concat(ability.effects)
+
+    // end turn
+    targetUser.stats.effects.forEach(effect => {
+        const ability = data.Ability[effect.ability]
+        if(ability.abilityType === 'weapon')
+            doWeaponEffect(room, user, targetUser, effect)
+    })
+
+    if(room.data.turnIndex + 1 >= room.data.turnOrder.length)
+        room.data.turnIndex = 0
+    else
+        room.data.turnIndex ++
 }
 
-const doEffect = (target, effect) => {
-
+const turnIndex = username => {
+    const user = getUser(username)
+    if(user && user.roomId) {
+        console.log(RoomPipe[user.roomId].val().data.turnIndex)
+        const room = RoomPipe[user.roomId].val()
+        return {turnIndex: room.data.turnIndex}
+    }
 }
-module.exports = {joinQue, checkQue, leaveQue}
+
+const changes = username => {
+    const user = getUser(username)
+    if(user && user.roomId) {
+        const room = RoomPipe[user.roomId].val()
+        return room.data.changes
+    }
+}
+
+module.exports = {joinQue, checkQue, leaveQue, ability, turnIndex, changes}

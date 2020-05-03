@@ -1,0 +1,5 @@
+const EF = require('../../utils/effect-factory.js')
+
+module.exports = (room, caster, target) => {
+
+}

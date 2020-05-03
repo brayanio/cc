@@ -7,6 +7,12 @@ const User = class {
         this.username = username
         this.armor = data.Armor.Breastplate
         this.weapon = data.Weapon.BattleAxe
+        this.stats = {
+            health: this.armor.hp + 0,
+            attack: this.weapon.attack + 0,
+            speed: this.armor.speed,
+            effects: []
+        }
     }
 
     packet() {

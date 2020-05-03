@@ -11,11 +11,11 @@ const nospace = str => str.split(' ').join('')
 
 // data
 const weaponAbility = (name, event, target, ...effects) => {
-    return {name, event, target, effects}
+    return {name, event, target, effects, abilityType: 'weapon'}
 }
 
 const skillAbility = (name, cooldown, target, ...effects) => {
-    return {name, cooldown, target, effects}
+    return {name, cooldown, target, effects, abilityType: 'skill'}
 }
 let AbilityData = Data('Ability', 'Abilitys', (data, e) => data[nospace(e.name)] = e,
     weaponAbility('Basic Attack', 'attack', 'enemy', effects.Effect.BasicAttack),

@@ -11,7 +11,7 @@ const Article = (...e) => Layout.El('article', ...e)
 const Card = (...e) => Layout.El('aside', ...e)
 const CardBody = (...e) => Layout.El('p', ...e)
 
-const Button = (inner, fn) => Layout.Btn([], inner, fn)
+const Button = (inner, fn) => Layout.BtnAuto([], inner, fn)
 
 const Accordion = (summary, ...e) => Layout.El('details', 
   Layout.El('summary', summary),

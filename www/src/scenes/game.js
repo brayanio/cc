@@ -20,7 +20,7 @@ export default () => nggt.create({
                 )
             ),
             Prefabs.Map(room.uiData.abilityNames, name =>
-                Prefabs.Button(name, () => console.log(RoomService.getUser()))
+                Prefabs.Button(name, () => RoomService.ability(name))
             )
         )
         : ''

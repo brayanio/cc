@@ -1,4 +1,5 @@
 import nggt from '../nggt.js'
+import pvp from './pvp.js'
 
 const pipe = nggt.service('room', {checkQue: false})
 
@@ -7,9 +8,10 @@ const QUE_TIME = 5000
 const joinQue = async (username, gameType, playerCount) => {
     let obj = await pipe.post('room', 'join-room', {username, que: gameType, playerCount}, true)
     console.log('obj', obj)
-    if (obj.packet && obj.packet === 'room')
+    if (obj.packet && obj.packet === 'room') {
         location.hash = '#/game'
-    else {
+        pvp.start(username)
+    } else {
         pipe.checkQue.change(true)
         setTimeout(() => checkQue(username), QUE_TIME)
     }
@@ -23,6 +25,7 @@ const checkQue = async username => {
         if (obj.packet && obj.packet === 'room') {
             pipe.checkQue.change(false)
             location.hash = '#/game'
+            pvp.start(username)
         } else if (obj.error) {
             pipe.checkQue.change(false)
             console.error('[Game Error]', obj.error, obj.msg)
@@ -35,6 +38,7 @@ const leaveQue = async username => {
     pipe.checkQue.change(false)
     pipe.send('leave-que', {username}, true)
     pipe.room.change(null)
+    pvp.stop()
 }
 const isUser = username => {
     console.log(pipe.room.val())
@@ -46,4 +50,9 @@ const getUser = () =>
 
 const ui = () => pipe.room.val().uiData
 
-export default {pipe, joinQue, leaveQue, isUser, getUser, ui}
+const ability = (name, target) => {
+    console.log('clicked')
+    pvp.ability(pipe.room.val(), name, target)
+}
+
+export default {pipe, joinQue, leaveQue, isUser, getUser, ui, ability}
