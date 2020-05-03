@@ -1,0 +1,7 @@
+.canvas{
+  overflow: auto;
+}
+
+.sprite{
+  position: absolute;
+}

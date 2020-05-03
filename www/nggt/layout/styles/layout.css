@@ -1,0 +1,57 @@
+/* ColGrid */
+
+@media screen and (min-width: 800px){
+  .d1{
+    width: 10%;
+    box-sizing: border-box;
+  }
+
+  .d2{
+    width: 20%;
+    box-sizing: border-box;
+  }
+
+  .d3{
+    width: 30%;
+    box-sizing: border-box;
+  }
+
+  .d4{
+    width: 40%;
+    box-sizing: border-box;
+  }
+
+  .d5{
+    width: 50%;
+    box-sizing: border-box;
+  }
+
+  .d6{
+    width: 60%;
+    box-sizing: border-box;
+  }
+
+  .d7{
+    width: 70%;
+    box-sizing: border-box;
+  }
+
+  .d8{
+    width: 80%;
+    box-sizing: border-box;
+  }
+
+  .d9{
+    width: 90%;
+    box-sizing: border-box;
+  }
+
+  .d10{
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  .drow{
+    display: flex;
+  }
+}

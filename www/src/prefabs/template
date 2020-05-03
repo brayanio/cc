@@ -1,0 +1,5 @@
+import Data from '../data/module.js'
+import GamePipe from '../pipes/game.js'
+import Layout from './gl-layout.js'
+
+export default () => Layout.El('div')

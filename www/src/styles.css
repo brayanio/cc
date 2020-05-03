@@ -1,0 +1,26 @@
+@import url("../nggt/layout/styles/layout.css");
+@import url("../libs/glcss/styles/gl.css");
+@import url("./styles/game.css");
+/* @import url("../libs/sprite/styles/sprite.css"); */
+
+button {
+  padding: 1rem 1.75rem;
+  margin: 2px;
+}
+
+article aside{
+  padding: 0.4rem 0.8rem;
+}
+
+body > header {
+  padding: 0 1rem;
+}
+
+body > main, body > footer{
+  padding: 1rem;
+}
+
+body > header, nav{
+  margin-bottom: 0; 
+  padding-bottom: 0; 
+}

@@ -1,0 +1,30 @@
+/* Utils */
+
+.align{
+  display: flex;
+  align-items: center;
+}
+
+.right{
+  width: 100%;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.hidden{
+  display: none !important;
+}
+
+.space-between{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.pad{
+  padding: 6px;
+}
+
+.pad_thick{
+  padding: 12px;
+}
