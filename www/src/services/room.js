@@ -54,5 +54,6 @@ const ability = (name, target) => {
     console.log('clicked')
     pvp.ability(pipe.room.val(), name, target)
 }
+pvp.pipe.changes.onChange((changes) => (changes && changes.uiData) ? pipe.room.change(room => room.uiData = changes.uiData) : null)
 
 export default {pipe, joinQue, leaveQue, isUser, getUser, ui, ability}

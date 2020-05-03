@@ -2,9 +2,10 @@ import nggt from '../nggt.js'
 import Prefabs from '../prefabs/module.js'
 import GamePipe from '../pipes/game.js'
 import RoomService from '../services/room.js'
+import PvpService from '../services/pvp.js'
 
 const RoomPipe = RoomService.pipe
-
+const pvp = PvpService.pipe
 export default () => nggt.create({
     isRoot: true,
     classList: ['game'],
@@ -19,8 +20,12 @@ export default () => nggt.create({
                     )
                 )
             ),
-            Prefabs.Map(room.uiData.abilityNames, name =>
-                Prefabs.Button(name, () => RoomService.ability(name))
+            Prefabs.DataObj(pvp.turnIndex, turnIndex =>
+                Prefabs.If(turnIndex && room.data.turnOrder[turnIndex.turnIndex] === room.username,
+                    Prefabs.Map(room.uiData.abilityNames, name =>
+                        Prefabs.Button(name, () => RoomService.ability(name))
+                    )
+                )
             )
         )
         : ''

@@ -173,10 +173,10 @@ const turnIndex = username => {
 
 const changes = username => {
     const user = getUser(username)
-    if(user && user.roomId) {
+    if (user && user.roomId) {
         const room = RoomPipe[user.roomId].val()
-        return room.data.changes
+
+        return {changes: room.data.changes, uiData: room.uiData()}
     }
 }
-
 module.exports = {joinQue, checkQue, leaveQue, ability, turnIndex, changes}

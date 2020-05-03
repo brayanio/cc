@@ -23,6 +23,6 @@ module.exports = (room, caster, target) => {
         id,
         rolls,
         damage,
-        [target.username]: target.stats
+        modified: {[target.username]: target.stats}
     })
 }

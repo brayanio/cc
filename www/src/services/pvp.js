@@ -2,7 +2,7 @@ import nggt from '../nggt.js'
 
 const pipe = nggt.service('turnIndex', 'changes')
 
-const REFRESH_TIME = 5000
+const REFRESH_TIME = 2000
 let on = false
 let currentIndex
 
@@ -19,6 +19,7 @@ const checkTurnIndex = async (username) => {
             const changes = await pipe.post('changes', 'changes', {username}, true)
             currentIndex = turnIndex
             console.log('CHANGES', changes)
+
         }
         setTimeout(() => checkTurnIndex(username), REFRESH_TIME)
     }
