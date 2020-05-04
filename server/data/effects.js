@@ -9,13 +9,17 @@ const Data = (name, plural, map, ...vals) => {
 const nospace = str => str.split(' ').join('')
 
 // data
-const effect = (name, duration, start) => {
-  return {name, duration, start}
+const effect = (name, duration, start, ...tags) => {
+  return {name, duration, start, tags}
 }
 
 let EffectData = Data('Effect', 'Effects', (data, e) => data[nospace(e.name)] = e,
-  effect('Basic Attack', 1, 'instant'),
-  effect('Heal', 1, 'instant')
+    effect('Basic Attack', 0, 'instant'),
+    effect('Heal', 0, 'instant'),
+
+    //Skills
+    effect('Skeleton', 2, 'turnend', 'pet'),
+    effect('Fatigue', 3, 'buff', 'buff')
 )
 
 /*

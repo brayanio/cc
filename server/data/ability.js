@@ -19,6 +19,10 @@ const skillAbility = (name, cooldown, target, ...effects) => {
 }
 let AbilityData = Data('Ability', 'Abilitys', (data, e) => data[nospace(e.name)] = e,
     weaponAbility('Basic Attack', 'attack', 'enemy', effects.Effect.BasicAttack),
-    skillAbility('Heal', 5, 'self', effects.Effect.Heal)
+    //armor
+    skillAbility('Heal', 5, 'self', effects.Effect.Heal),
+    //skills
+    skillAbility('Skeleton', 0, 'self', effects.Effect.Skeleton, /*effects.Effect.Skeleton*/),
+    skillAbility('Fatigue', 2, 'enemy', effects.Effect.Fatigue)
 )
 module.exports = {...AbilityData}

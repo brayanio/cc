@@ -1,5 +1,27 @@
 const guid = require('./guid.js')
 
+const buff = (effect, is, aint) => {
+    switch(effect.start) {
+        case'buff':
+            is()
+            effect.start = 'remove'
+            break
+        case 'remove':
+            aint()
+            effect.start = 'buff'
+            break
+    }
+}
+
+const petAttack = (caster, damageDie) => {
+    let damage = Math.floor(Math.random() * damageDie) + 1
+    const rolls = [damage]
+    return {
+        rolls,
+        damage
+    }
+}
+
 const attack = (caster, r) => {
     const level = caster.weapon.level
     const damageDie = caster.weapon.damageDie
@@ -33,13 +55,15 @@ const heal = (caster, r) => {
 }
 
 const change = (room, ...changes)=> room.data.changes.push({
-        id: guid(),
-        ...changes
-    })
+    id: guid(),
+    ...changes
+})
 
 module.exports = {
     guid,
     attack,
     change,
-    heal
+    heal,
+    petAttack,
+    buff
 }

@@ -1,3 +1,5 @@
+// -----------------------------------------------------------TEMPLATE
+
 const EF = require('../../utils/effect-factory.js')
 
 module.exports = (room, caster, target) => {
@@ -7,6 +9,23 @@ module.exports = (room, caster, target) => {
     EF.change(room, {
         damage,
         rolls,
+        modified: {[target.username]: target.stats}
+    })
+}
+
+// -----------------------------------------------------------BUFF TEMPLATE
+
+const EF = require('../../utils/effect-factory.js')
+
+module.exports = (room, caster, target, effect) => {
+    EF.buff(effect, ()=>{
+        target.stats.attack -= 2
+    }, ()=>{
+        target.stats.attack += 2
+    })
+
+    EF.change(room, {
+        weaken: 2,
         modified: {[target.username]: target.stats}
     })
 }

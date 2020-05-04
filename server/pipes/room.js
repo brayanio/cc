@@ -42,11 +42,11 @@ const Room = class {
         const abilityPacket = (name, target, cooldown) => {
             return {name, target, cooldown}
         }
-        console.log(user.stats.cooldowns, 'HERERERERER')
         return {
             abilityData: [
                 abilityPacket(user.weapon.ability.name, user.weapon.ability.target, 0),
                 abilityPacket(user.armor.ability.name, user.armor.ability.target, user.stats.cooldowns[user.armor.ability.name] || 0),
+                ...user.skills.map(skill => abilityPacket(skill.name, skill.target, user.stats.cooldowns[skill.name] || 0))
             ],
 
             health
@@ -61,6 +61,7 @@ const Room = class {
     packet(username) {
         this.data.userPackets = this.userData()
         const team = this.teamA.includes(username) ? 0 : 1
+        const enemyTeam = this.teamA.includes(username) ? 1 : 0
         return {
             packet: 'room',
             data: this.data,
@@ -68,7 +69,8 @@ const Room = class {
             uiData: this.uiData(username),
             stats: this.stats,
             teams: [this.teamA, this.teamB],
-            team
+            team,
+            enemyTeam
         }
     }
 }
@@ -143,20 +145,24 @@ const leaveQue = username => {
 }
 
 const doEffect = (room, caster, target, effect) => {
-    effect.duration--
-    if (effect.duration < 0) {
-        console.log(effect.duration, data().Effect[nospace(effect.name)].duration)
-        effect.duration = data().Effect[nospace(effect.name)].duration
-        target.stats.effects = target.stats.effects.filter((Effect) => Effect.name !== effect.name)
-
-    }
     if(target.stats.cooldowns)
-        Object.keys(target.stats.cooldowns).forEach((abilityname)=> caster.stats.cooldowns[abilityname]--)
-    if (effect.start === 'instant') {
-        console.log(data().EffectFn[nospace(effect.name)],effect, target.stats.cooldowns, effect.ability)
+        Object.keys(target.stats.cooldowns).forEach((abilityname)=> {
+            if(caster.stats.cooldowns[abilityname] - 1 > 0)
+                caster.stats.cooldowns[abilityname]--
+        })
+    data().EffectFn[nospace(effect.name)](room, caster, target, effect)
+}
 
-        data().EffectFn[nospace(effect.name)](room, caster, target)
-    } else if (effect.start === 'charge') {
+const runEffectEvent = (start, effect, room, user, targetUser) => {
+    if (effect.start === start) {
+        const ability = data().Ability[effect.ability]
+        if (ability.abilityType === 'weapon')
+            doEffect(room, user, targetUser, effect)
+        if (ability.abilityType === 'skill' ) {
+            user.stats.cooldowns[ability.name] = ability.cooldown
+            // Something about Cooldown ability.cooldown
+            doEffect(room, user, targetUser, effect)
+        }
     }
 }
 
@@ -164,27 +170,37 @@ const ability = (username, target, abilityName) => {
     const user = getUser(username)
     const targetUser = getUser(target)
     const room = RoomPipe[user.roomId].val()
+    if(room.data.turnOrder[room.data.turnIndex] !== username)
+        return null
     console.log(abilityName)
     const ability = data().Ability[nospace(abilityName)]
-    ability.effects.forEach(effect => effect.ability = nospace(ability.name))
+    ability.effects = ability.effects.filter(effect => {
+        effect.ability = nospace(ability.name)
+        effect.birth = {username, target}
+        runEffectEvent('instant', effect, room, user, targetUser)
+        runEffectEvent('buff', effect, room, user, targetUser)
+        return effect.start !== 'instant'
+    })
     targetUser.stats.effects = targetUser.stats.effects.concat(ability.effects)
 
-    // end turn
-    targetUser.stats.effects.forEach(effect => {
-        const ability = data().Ability[effect.ability]
-        if (ability.abilityType === 'weapon')
-            doEffect(room, user, targetUser, effect)
-        if (ability.abilityType === 'skill' ) {
-            user.stats.cooldowns[abilityName] = ability.cooldown
-            // Something about Cooldown ability.cooldown
-            doEffect(room, user, targetUser, effect)
+    //end turn
+    user.stats.effects = user.stats.effects.filter(effect => {
+        runEffectEvent('turnend', effect, room, user, targetUser)
+        effect.duration--
+        if(effect.duration === 0) {
+            runEffectEvent('remove', effect, room, user, targetUser)
+            return false
         }
+        return true
     })
 
     if (room.data.turnIndex + 1 >= room.data.turnOrder.length)
         room.data.turnIndex = 0
     else
         room.data.turnIndex++
+    //start turn
+    const currentUser = getUser(room.data.turnOrder[room.data.turnIndex])
+    currentUser.stats.effects.forEach(effect => runEffectEvent('turnstart', effect, room, currentUser, getUser(effect.birth.target)))
 }
 
 const turnIndex = username => {
@@ -196,12 +212,17 @@ const turnIndex = username => {
     }
 }
 
-const changes = username => {
+const changes = (username, changeId) => {
     const user = getUser(username)
     if (user && user.roomId) {
         const room = RoomPipe[user.roomId].val()
+        let index
+        room.data.changes.find((e, i) => changeId === e.id ? index = i : null)
 
-        return {changes: room.data.changes, uiData: room.uiData(username)}
+        if(!index)
+            return {changes: room.data.changes, uiData: room.uiData(username)}
+
+        return {changes: room.data.changes.slice(index), uiData: room.uiData(username)}
     }
 }
 module.exports = {joinQue, checkQue, leaveQue, ability, turnIndex, changes}

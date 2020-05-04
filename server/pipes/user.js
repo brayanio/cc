@@ -6,6 +6,7 @@ const User = class {
         this.username = username
         this.armor = data().Armor.Breastplate
         this.weapon = data().Weapon.BattleAxe
+        this.skills = [data().Ability.Skeleton, data().Ability.Fatigue]
         this.stats = {
             health: this.armor.hp + 0,
             attack: this.weapon.attack + 0,

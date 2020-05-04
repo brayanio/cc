@@ -1,6 +1,6 @@
 import nggt from '../nggt.js'
 
-const pipe = nggt.service('turnIndex', 'changes')
+const pipe = nggt.service('turnIndex', 'changes', 'currentChangeId')
 
 const REFRESH_TIME = 2000
 let on = false
@@ -16,10 +16,9 @@ const checkTurnIndex = async (username) => {
         await pipe.post('turnIndex', 'turn-index', {username})
         const turnIndex = pipe.turnIndex.val().turnIndex
         if (currentIndex !== turnIndex) {
-            const changes = await pipe.post('changes', 'changes', {username}, true)
+            const changes = await pipe.post('changes', 'changes', {username, changeId: pipe.currentChangeId.val()}, true)
             currentIndex = turnIndex
             console.log('CHANGES', changes)
-
         }
         setTimeout(() => checkTurnIndex(username), REFRESH_TIME)
     }
@@ -42,5 +41,10 @@ const ability = (room, abilityName, abilityTarget) => {
 
     pipe.send('ability', {username, target, ability: abilityName}, true)
 }
+
+pipe.changes.onChange(o => {
+    if(o && o.changes[o.changes.length - 1])
+        pipe.currentChangeId.change(o.changes[o.changes.length - 1].id)
+})
 
 export default {pipe, start, stop, ability}
