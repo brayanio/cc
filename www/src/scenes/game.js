@@ -38,8 +38,8 @@ export default () => nggt.create({
                             Prefabs.Join(  '</br>',
                             Prefabs.Article(
                                 Prefabs.Card(
-                                    Prefabs.El('b', change.effect.name),
-                                    Prefabs.El('p', `${change[Object.keys(change)[2]]} ${Object.keys(change)[2]} to ${Object.keys(change.modified).toString()}`))
+                                    Prefabs.El('b', change.effect.name + ` &#8702; ${Object.keys(change.modified).toString()}`),
+                                    Prefabs.El('p', `${change[Object.keys(change)[2]]} ${Object.keys(change)[2]}`))
                             ))
                         )
                         : ""

@@ -44,7 +44,7 @@ const ability = (room, abilityName, abilityTarget) => {
 
 pipe.changes.onChange(o => {
     if(o && o.changes[o.changes.length - 1])
-        pipe.currentChangeId.change(o.changes[o.changes.length - 1].id)
+        pipe.currentChangeId.change(o.changes[0].id)
 })
 
 export default {pipe, start, stop, ability}

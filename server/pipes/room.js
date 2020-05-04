@@ -226,9 +226,9 @@ const changes = (username, changeId) => {
         room.data.changes.find((e, i) => changeId === e.id ? index = i : null)
 
         if(!index)
-            return {changes: room.data.changes, uiData: room.uiData(username)}
+            return {changes: JSON.parse(JSON.stringify(room.data.changes)).reverse(), uiData: room.uiData(username)}
 
-        return {changes: room.data.changes.slice(index), uiData: room.uiData(username)}
+        return {changes: room.data.changes.slice(index + 1).reverse(), uiData: room.uiData(username)}
     }
 }
 module.exports = {joinQue, checkQue, leaveQue, ability, turnIndex, changes}
