@@ -145,13 +145,17 @@ const leaveQue = username => {
 const doEffect = (room, caster, target, effect) => {
     effect.duration--
     if (effect.duration < 0) {
+        console.log(effect.duration, data().Effect[nospace(effect.name)].duration)
+        effect.duration = data().Effect[nospace(effect.name)].duration
         target.stats.effects = target.stats.effects.filter((Effect) => Effect.name !== effect.name)
+
     }
+    if(target.stats.cooldowns)
+        Object.keys(target.stats.cooldowns).forEach((abilityname)=> caster.stats.cooldowns[abilityname]--)
     if (effect.start === 'instant') {
-        console.log(data.EffectFn[nospace(effect.name)],effect)
-        if(target.stats.cooldowns[effect.ability])
-            target.stats.cooldowns[effect.ability]--
-        data.EffectFn[nospace(effect.name)](room, caster, target)
+        console.log(data().EffectFn[nospace(effect.name)],effect, target.stats.cooldowns, effect.ability)
+
+        data().EffectFn[nospace(effect.name)](room, caster, target)
     } else if (effect.start === 'charge') {
     }
 }
@@ -161,13 +165,13 @@ const ability = (username, target, abilityName) => {
     const targetUser = getUser(target)
     const room = RoomPipe[user.roomId].val()
     console.log(abilityName)
-    const ability = data.Ability[nospace(abilityName)]
+    const ability = data().Ability[nospace(abilityName)]
     ability.effects.forEach(effect => effect.ability = nospace(ability.name))
     targetUser.stats.effects = targetUser.stats.effects.concat(ability.effects)
 
     // end turn
     targetUser.stats.effects.forEach(effect => {
-        const ability = data.Ability[effect.ability]
+        const ability = data().Ability[effect.ability]
         if (ability.abilityType === 'weapon')
             doEffect(room, user, targetUser, effect)
         if (ability.abilityType === 'skill' ) {

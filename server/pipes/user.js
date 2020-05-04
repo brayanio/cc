@@ -1,12 +1,11 @@
 const nggt = require('../utils/nggt.js')
 const data = require('../data/module.js')
 const cachePipe = nggt.pipe()
-
 const User = class {
     constructor(username) {
         this.username = username
-        this.armor = data.Armor.Breastplate
-        this.weapon = data.Weapon.BattleAxe
+        this.armor = data().Armor.Breastplate
+        this.weapon = data().Weapon.BattleAxe
         this.stats = {
             health: this.armor.hp + 0,
             attack: this.weapon.attack + 0,
@@ -39,10 +38,13 @@ const User = class {
         delete this.roomId
     }
 }
+
+
+
     const getUser = username => {
         let userObj = cachePipe[username]
         if (!userObj) cachePipe[username] = userObj = nggt.dataObj(new User(username))
         return userObj.val()
     }
 
-module.exports = {getUser, ...cachePipe}
+module.exports = {getUser,  ...cachePipe}
