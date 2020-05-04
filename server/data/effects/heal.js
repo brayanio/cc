@@ -1,6 +1,6 @@
 const EF = require('../../utils/effect-factory.js')
 const r = require('../rarity.js')
-module.exports = (room, caster, target) => {
+module.exports = (room, caster, target, effect) => {
     const {total} = EF.heal(caster, r)
 
     if(target.stats.health + total >= target.armor.hp) {
@@ -13,5 +13,5 @@ module.exports = (room, caster, target) => {
     EF.change(room, {
         heal: total,
         modified: {[target.username]: target.stats}
-    })
+    }, effect)
 }

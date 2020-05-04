@@ -17,5 +17,5 @@ module.exports = (room, caster, target, effect) => {
     EF.change(room, {
         ...status,
         modified: {[target.username]: target.stats}
-    })
+    }, effect)
 }

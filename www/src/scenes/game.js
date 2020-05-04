@@ -35,7 +35,13 @@ export default () => nggt.create({
                     console.log(o)
                     return (o && o.changes.length > 0) ?
                         Prefabs.Map(o.changes, (change) =>
-                            Prefabs.El('p', `${change[Object.keys(change)[1]]} ${Object.keys(change)[1]} to ${Object.keys(change.modified).toString()}`))
+                            Prefabs.Join(  '</br>',
+                            Prefabs.Article(
+                                Prefabs.Card(
+                                    Prefabs.El('b', change.effect.name),
+                                    Prefabs.El('p', `${change[Object.keys(change)[2]]} ${Object.keys(change)[2]} to ${Object.keys(change.modified).toString()}`))
+                            ))
+                        )
                         : ""
                 }
             )

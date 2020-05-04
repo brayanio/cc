@@ -153,7 +153,7 @@ const leaveQue = username => {
 const doEffect = (room, caster, target, effect) => {
     if(target.stats.cooldowns)
         Object.keys(target.stats.cooldowns).forEach((abilityname)=> {
-            if(caster.stats.cooldowns[abilityname] - 1 > 0)
+            if(caster.stats.cooldowns[abilityname] - 1 >= 0)
                 caster.stats.cooldowns[abilityname]--
         })
     data().EffectFn[nospace(effect.name)](room, caster, target, effect)

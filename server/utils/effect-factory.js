@@ -54,8 +54,9 @@ const heal = (caster, r) => {
     }
 }
 
-const change = (room, changes)=> room.data.changes.push({
+const change = (room, changes, effect)=> room.data.changes.push({
     id: guid(),
+    effect,
     ...changes
 })
 
