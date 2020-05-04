@@ -22,8 +22,8 @@ export default () => nggt.create({
             ),
             Prefabs.DataObj(pvp.turnIndex, turnIndex =>
                 Prefabs.If(turnIndex && room.data.turnOrder[turnIndex.turnIndex] === room.username,
-                    Prefabs.Map(room.uiData.abilityNames, name =>
-                        Prefabs.Button(name, () => RoomService.ability(name))
+                    Prefabs.Map(room.uiData.abilityData, obj =>
+                        Prefabs.Button(obj.name, () => RoomService.ability(obj.name, obj.target))
                     )
                 )
             )

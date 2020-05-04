@@ -27,11 +27,18 @@ const checkTurnIndex = async (username) => {
 
 const stop = () => on = false
 
-const ability = (room, abilityName, target) => {
+const ability = (room, abilityName, abilityTarget) => {
     const username = room.username
     const enemies = (room.team === 1 ? 0 : 1)
-    if(room.teams[enemies].length === 1)
-        target = room.teams[enemies][0]
+    let target
+
+    if(abilityTarget === 'enemy'){
+        if(room.teams[enemies].length === 1)
+            target = room.teams[enemies][0]
+    }
+
+    if(abilityTarget === 'self')
+        target = room.username
 
     pipe.send('ability', {username, target, ability: abilityName}, true)
 }

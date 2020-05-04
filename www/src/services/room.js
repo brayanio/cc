@@ -50,9 +50,10 @@ const getUser = () =>
 
 const ui = () => pipe.room.val().uiData
 
-const ability = (name, target) => {
+const ability = (name, abilityTarget) => {
+    //PHONEY
     console.log('clicked')
-    pvp.ability(pipe.room.val(), name, target)
+    pvp.ability(pipe.room.val(), name, abilityTarget)
 }
 pvp.pipe.changes.onChange((changes) => (changes && changes.uiData) ? pipe.room.change(room => room.uiData = changes.uiData) : null)
 

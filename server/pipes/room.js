@@ -8,7 +8,6 @@ const getUser = username => UserPipe.getUser(username)
 const nospace = str => str.split(' ').join('');
 
 
-
 const Room = class {
     constructor(que) {
         this.id = guid()
@@ -41,11 +40,11 @@ const Room = class {
         this.meta.connected.forEach(o => health[o.username] = getUser(o.username).stats.health)
 
         return {
-            abilityNames: [
-                user.weapon.ability.name,
-                user.armor.ability.name,
+            abilityData: [
+                {name: user.weapon.ability.name, target: user.weapon.ability.target},
+                {name: user.armor.ability.name, target: user.armor.ability.target},
             ],
-            health,
+            health
         }
     }
 
@@ -138,7 +137,17 @@ const leaveQue = username => {
     return {msg: 'User removed from any que or active room.', error: false}
 }
 
-const doWeaponEffect = (room, caster, target, effect) => data.EffectFn[nospace(effect.name)](room, caster, target)
+const doEffect = (room, caster, target, effect) => {
+    effect.duration--
+    if (effect.duration < 0) {
+        target.stats.effects = target.stats.effects.filter((Effect) => Effect.name !== effect.name)
+    }
+    if (effect.start === 'instant') {
+        console.log(data.EffectFn[nospace(effect.name)],effect)
+        data.EffectFn[nospace(effect.name)](room, caster, target)
+    } else if (effect.start === 'charge') {
+    }
+}
 
 const ability = (username, target, abilityName) => {
     const user = getUser(username)
@@ -152,19 +161,24 @@ const ability = (username, target, abilityName) => {
     // end turn
     targetUser.stats.effects.forEach(effect => {
         const ability = data.Ability[effect.ability]
-        if(ability.abilityType === 'weapon')
-            doWeaponEffect(room, user, targetUser, effect)
+        if (ability.abilityType === 'weapon')
+            doEffect(room, user, targetUser, effect)
+        if (ability.abilityType === 'skill') {
+
+            // Something about Cooldown ability.cooldown
+            doEffect(room, user, targetUser, effect)
+        }
     })
 
-    if(room.data.turnIndex + 1 >= room.data.turnOrder.length)
+    if (room.data.turnIndex + 1 >= room.data.turnOrder.length)
         room.data.turnIndex = 0
     else
-        room.data.turnIndex ++
+        room.data.turnIndex++
 }
 
 const turnIndex = username => {
     const user = getUser(username)
-    if(user && user.roomId) {
+    if (user && user.roomId) {
         console.log(RoomPipe[user.roomId].val().data.turnIndex)
         const room = RoomPipe[user.roomId].val()
         return {turnIndex: room.data.turnIndex}

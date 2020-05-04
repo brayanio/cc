@@ -1,3 +1,4 @@
 module.exports = {
-  BasicAttack: require('./basic-attack.js')
+  BasicAttack: require('./basic-attack.js'),
+  Heal: require('./heal.js')
 }
