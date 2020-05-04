@@ -11,7 +11,8 @@ const User = class {
             health: this.armor.hp + 0,
             attack: this.weapon.attack + 0,
             speed: this.armor.speed,
-            effects: []
+            effects: [],
+            cooldowns: {}
         }
     }
 

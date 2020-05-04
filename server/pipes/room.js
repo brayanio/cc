@@ -39,11 +39,16 @@ const Room = class {
         const health = {}
         this.meta.connected.forEach(o => health[o.username] = getUser(o.username).stats.health)
 
+        const abilityPacket = (name, target, cooldown) => {
+            return {name, target, cooldown}
+        }
+        console.log(user.stats.cooldowns, 'HERERERERER')
         return {
             abilityData: [
-                {name: user.weapon.ability.name, target: user.weapon.ability.target},
-                {name: user.armor.ability.name, target: user.armor.ability.target},
+                abilityPacket(user.weapon.ability.name, user.weapon.ability.target, 0),
+                abilityPacket(user.armor.ability.name, user.armor.ability.target, user.stats.cooldowns[user.armor.ability.name] || 0),
             ],
+
             health
         }
     }
@@ -144,6 +149,8 @@ const doEffect = (room, caster, target, effect) => {
     }
     if (effect.start === 'instant') {
         console.log(data.EffectFn[nospace(effect.name)],effect)
+        if(target.stats.cooldowns[effect.ability])
+            target.stats.cooldowns[effect.ability]--
         data.EffectFn[nospace(effect.name)](room, caster, target)
     } else if (effect.start === 'charge') {
     }
@@ -163,8 +170,8 @@ const ability = (username, target, abilityName) => {
         const ability = data.Ability[effect.ability]
         if (ability.abilityType === 'weapon')
             doEffect(room, user, targetUser, effect)
-        if (ability.abilityType === 'skill') {
-
+        if (ability.abilityType === 'skill' ) {
+            user.stats.cooldowns[abilityName] = ability.cooldown
             // Something about Cooldown ability.cooldown
             doEffect(room, user, targetUser, effect)
         }
@@ -190,7 +197,7 @@ const changes = username => {
     if (user && user.roomId) {
         const room = RoomPipe[user.roomId].val()
 
-        return {changes: room.data.changes, uiData: room.uiData()}
+        return {changes: room.data.changes, uiData: room.uiData(username)}
     }
 }
 module.exports = {joinQue, checkQue, leaveQue, ability, turnIndex, changes}
