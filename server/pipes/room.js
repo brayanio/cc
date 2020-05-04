@@ -37,8 +37,14 @@ const Room = class {
     uiData(username) {
         const user = getUser(username)
         const health = {}
-        this.meta.connected.forEach(o => health[o.username] = getUser(o.username).stats.health)
+        let effects = {}
+        this.meta.connected.forEach(o => {
+            const User = getUser(o.username)
+            effects[o.username] = User.stats.effects
+            health[o.username] = User.stats.health
+        })
 
+        this.meta.connected
         const abilityPacket = (name, target, cooldown) => {
             return {name, target, cooldown}
         }
@@ -48,7 +54,7 @@ const Room = class {
                 abilityPacket(user.armor.ability.name, user.armor.ability.target, user.stats.cooldowns[user.armor.ability.name] || 0),
                 ...user.skills.map(skill => abilityPacket(skill.name, skill.target, user.stats.cooldowns[skill.name] || 0))
             ],
-
+            effects,
             health
         }
     }
