@@ -23,6 +23,8 @@ let AbilityData = Data('Ability', 'Abilitys', (data, e) => data[nospace(e.name)]
     skillAbility('Heal', 5, 'self', effects.Effect.Heal),
     //skills
     skillAbility('Skeleton', 0, 'self', effects.Effect.Skeleton, effects.Effect.Skeleton),
-    skillAbility('Fatigue', 2, 'enemy', effects.Effect.Fatigue)
+    skillAbility('Fatigue', 2, 'enemy', effects.Effect.Fatigue),
+    skillAbility('Rage', 3, 'self', effects.Effect.RagePassive, effects.Effect.Rage, effects.Effect.Rage),
+    skillAbility('Gore', 0, 'enemy', effects.Effect.Bleed)
 )
 module.exports = {...AbilityData}
