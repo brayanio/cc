@@ -150,25 +150,14 @@ const leaveQue = username => {
     return {msg: 'User removed from any que or active room.', error: false}
 }
 
-const doEffect = (room, caster, target, effect) => {
-    if(target.stats.cooldowns)
-        Object.keys(target.stats.cooldowns).forEach((abilityname)=> {
-            if(caster.stats.cooldowns[abilityname] - 1 >= 0)
-                caster.stats.cooldowns[abilityname]--
-        })
+const doEffect = (room, caster, target, effect) =>
     data().EffectFn[nospace(effect.name)](room, caster, target, effect)
-}
 
 const runEffectEvent = (start, effect, room, user, targetUser) => {
     if (effect.start === start) {
         const ability = data().Ability[effect.ability]
-        if (ability.abilityType === 'weapon')
+        if(ability)
             doEffect(room, user, targetUser, effect)
-        if (ability.abilityType === 'skill' ) {
-            user.stats.cooldowns[ability.name] = ability.cooldown
-            // Something about Cooldown ability.cooldown
-            doEffect(room, user, targetUser, effect)
-        }
     }
 }
 
@@ -178,22 +167,23 @@ const ability = (username, target, abilityName) => {
     const room = RoomPipe[user.roomId].val()
     if(room.data.turnOrder[room.data.turnIndex] !== username)
         return null
-    console.log(abilityName)
     const ability = data().Ability[nospace(abilityName)]
+    user.stats.cooldowns[ability.name] = ability.cooldown
     ability.effects = ability.effects.filter(effect => {
         effect.ability = nospace(ability.name)
         effect.birth = {username, target}
         runEffectEvent('instant', effect, room, user, targetUser)
         runEffectEvent('buff', effect, room, user, targetUser)
-        return effect.start !== 'instant'
+        return effect.start !== 'instant' && !effect.tags.includes('passive')
     })
     targetUser.stats.effects = targetUser.stats.effects.concat(ability.effects)
 
     //end turn
     user.stats.effects = user.stats.effects.filter(effect => {
         runEffectEvent('turnend', effect, room, user, targetUser)
-        effect.duration--
-        if(effect.duration === 0) {
+        if(!effect.tags.includes('passive') && effect.duration)
+            effect.duration--
+        if(effect.duration === 0 && effect.duration !== null) {
             runEffectEvent('remove', effect, room, user, targetUser)
             return false
         }
@@ -206,7 +196,19 @@ const ability = (username, target, abilityName) => {
         room.data.turnIndex++
     //start turn
     const currentUser = getUser(room.data.turnOrder[room.data.turnIndex])
-    currentUser.stats.effects.forEach(effect => runEffectEvent('turnstart', effect, room, currentUser, getUser(effect.birth.target)))
+    currentUser.stats.effects.forEach(effect =>
+        runEffectEvent('turnstart', effect, room, currentUser, getUser(effect.birth.target))
+    )
+    currentUser.stats.effects.forEach(effect =>
+        runEffectEvent('buff', effect, room, currentUser, getUser(effect.birth.target))
+    )
+    if(currentUser.stats.cooldowns) {
+        Object.keys(currentUser.stats.cooldowns).forEach((abilityname) => {
+            if (currentUser.stats.cooldowns[abilityname] - 1 >= 0)
+                currentUser.stats.cooldowns[abilityname]--
+        })
+        console.log('cooldown', currentUser.stats.cooldowns)
+    }
 }
 
 const turnIndex = username => {

@@ -24,3 +24,11 @@ body > header, nav{
   margin-bottom: 0; 
   padding-bottom: 0; 
 }
+
+.passive{
+  color: gray;
+}
+
+.turn{
+  border: 4px solid blue;
+}

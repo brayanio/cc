@@ -1,4 +1,6 @@
-const effects = require('./effects.js')
+const eff = require('./effects.js')
+const effects = () => JSON.parse(JSON.stringify(eff))
+
 // utils
 const Data = (name, plural, map, ...vals) => {
     let exp = {}
@@ -18,13 +20,13 @@ const skillAbility = (name, cooldown, target, ...effects) => {
     return {name, cooldown, target, effects, abilityType: 'skill'}
 }
 let AbilityData = Data('Ability', 'Abilitys', (data, e) => data[nospace(e.name)] = e,
-    weaponAbility('Basic Attack', 'attack', 'enemy', effects.Effect.BasicAttack),
+    weaponAbility('Basic Attack', 'attack', 'enemy', effects().Effect.BasicAttack),
     //armor
-    skillAbility('Heal', 5, 'self', effects.Effect.Heal),
+    skillAbility('Heal', 5, 'self', effects().Effect.Heal),
     //skills
-    skillAbility('Skeleton', 0, 'self', effects.Effect.Skeleton, effects.Effect.Skeleton),
-    skillAbility('Fatigue', 2, 'enemy', effects.Effect.Fatigue),
-    skillAbility('Rage', 3, 'self', effects.Effect.RagePassive, effects.Effect.Rage, effects.Effect.Rage),
-    skillAbility('Gore', 0, 'enemy', effects.Effect.Bleed)
+    skillAbility('Skeleton', 0, 'self', effects().Effect.Skeleton, effects().Effect.Skeleton),
+    skillAbility('Fatigue', 2, 'enemy', effects().Effect.Fatigue),
+    // skillAbility('Rage', 3, 'self', effects().Effect.Rage, effects().Effect.Fury, effects().Effect.Fury),
+    // skillAbility('Gore', 0, 'enemy', effects().Effect.Bleed)
 )
 module.exports = {...AbilityData}

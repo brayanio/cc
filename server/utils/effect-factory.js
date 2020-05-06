@@ -13,16 +13,21 @@ const buff = (effect, is, aint) => {
     }
 }
 
-const petAttack = (caster, damageDie) => {
-    let damage = Math.floor(Math.random() * damageDie) + 1
-    const rolls = [damage]
+const attack = (amount, damageDie) => {
+    const rolls = []
+    let damage = 0
+    for (let i = 0; i < amount; i++) {
+        const val = Math.floor(Math.random() * damageDie) + 1
+        rolls.push(val)
+        damage += val
+    }
     return {
         rolls,
         damage
     }
 }
 
-const attack = (caster, r) => {
+const weaponAttack = (caster, r) => {
     const level = caster.weapon.level
     const damageDie = caster.weapon.damageDie
     const attack = caster.weapon.attack
@@ -54,10 +59,11 @@ const heal = (caster, r) => {
     }
 }
 
-const change = (room, changes, effect)=> room.data.changes.push({
+const change = (room, effect, modified, changes)=> room.data.changes.push({
     id: guid(),
     effect,
-    ...changes
+    modified,
+    changes
 })
 
 module.exports = {
@@ -65,6 +71,6 @@ module.exports = {
     attack,
     change,
     heal,
-    petAttack,
+    weaponAttack,
     buff
 }

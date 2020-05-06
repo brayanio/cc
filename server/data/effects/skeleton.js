@@ -9,12 +9,11 @@ module.exports = (room, caster, target, effect) => {
     let enemies = packet.teams[packet.enemyTeam]
     target = getUser(enemies[Math.floor(Math.random() * enemies.length)])
 
-    const {damage, rolls} = EF.petAttack(caster, 4)
+    const {damage, rolls} = EF.attack( 1, 4)
     target.stats.health -= damage
 
-    EF.change(room, {
+    EF.change(room, effect, {[target.username]: target.stats},{
         damage,
-        rolls,
-        modified: {[target.username]: target.stats}
-    }, effect)
+        rolls
+    })
 }

@@ -10,8 +10,7 @@ module.exports = (room, caster, target, effect) => {
     }
 
 
-    EF.change(room, {
-        heal: total,
-        modified: {[target.username]: target.stats}
-    }, effect)
+    EF.change(room, effect, {[target.username]: target.stats}, {
+        heal: total
+    }, )
 }
