@@ -1,5 +1,5 @@
 const server = require('../utils/server.js')
-const roomPipe = require('../pipes/room.js')
+const quePipe = require('../pipes/que.js')
 
 module.exports = server.post('join-room', body => {
   console.log('[join]', body)
@@ -7,6 +7,6 @@ module.exports = server.post('join-room', body => {
   const que = body.que
   const playerCount = body.playerCount
   
-  let res = roomPipe.joinQue(username, que, playerCount)
+  let res = quePipe.joinQue(username, que, playerCount)
   return res
 })
