@@ -4,6 +4,10 @@ const guid = require('../../utils/guid.js')
 module.exports = class {
     constructor(username) {
         this.username = username
+        this.init()
+    }
+
+    init(){
         this.armor = data().Armor.Breastplate
         this.weapon = data().Weapon.BattleAxe
         this.skills = [data().Ability.Skeleton, data().Ability.Fatigue] //, data().Ability.Rage, data().Ability.Gore]

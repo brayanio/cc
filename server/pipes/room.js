@@ -10,7 +10,6 @@ const getUser = username => UserPipe.getUser(username)
 const nospace = str => str.split(' ').join('')
 
 // fns
-
 const doEffect = (room, caster, target, effect) =>
     data().EffectFn[nospace(effect.name)](room, caster, target, effect)
 

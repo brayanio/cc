@@ -1,6 +1,5 @@
 import nggt from '../nggt.js'
 import Prefabs from '../prefabs/module.js'
-//import GamePipe from '../pipes/game.js'
 //import RoomService from '../services/room.js'
 
 //const RoomPipe = RoomService.pipe
@@ -12,5 +11,5 @@ export default () => nggt.create({
     Prefabs.CardHeader("Works")
   ),
   //run: () => {  },
-  //cleanup: () => GamePipe.cleanup()
+  //cleanup: () => {}
 })

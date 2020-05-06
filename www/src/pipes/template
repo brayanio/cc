@@ -1,7 +1,0 @@
-import nggt from '../nggt.js'
-
-const pipe = nggt.pipe({
-  title: 'Game Template'
-})
-
-export default pipe

@@ -1,9 +1,10 @@
 const nggt = require('../../utils/nggt.js')
 const UserPipe = require('../user.js')
 const Room = require('./room.js')
-const guid = require('../../utils/guid.js')
+const room = require('../room.js')
+const RoomPipe = room.RoomPipe
 
-module.exports = RoomPipe => class {
+module.exports = class {
     constructor(name, username, playerCount) {
         this.name = name
         this.playerCount = playerCount
@@ -21,7 +22,10 @@ module.exports = RoomPipe => class {
         if (this.connected.length >= parseInt('' + this.playerCount)) {
             const roomCreated = new Room(this)
             RoomPipe[roomCreated.id] = nggt.dataObj(roomCreated)
-            this.connected.forEach(user => user.joinRoom(roomCreated.id))
+            this.connected.forEach(user => {
+                if(user.joinRoom)
+                    user.joinRoom(roomCreated.id)
+            })
             return roomCreated
         }
     }
