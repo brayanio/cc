@@ -5,7 +5,7 @@ const pvp = PvpService.pipe
 
 export default () => Layout.DataObj(pvp.changes, o => (o && o.changes.length > 0) 
     ? Layout.Map(o.changes, (change) =>
-            Layout.Join('</br>',
+            Layout.Join(`</br>`,
             Layout.Article(
                 Layout.Card(
                     Layout.El('b', change.effect.name + ` &#8702; ${Object.keys(change.modified).toString()}`),

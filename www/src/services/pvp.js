@@ -13,7 +13,7 @@ const start = async (username) => {
 
 const checkTurnIndex = async (username) => {
     if (on) {
-        await pipe.post('turnIndex', 'turn-index', {username})
+        await pipe.post('turnIndex', 'turn-index', {username, changeId: pipe.currentChangeId.val()}, false)
         const turnIndex = pipe.turnIndex.val().turnIndex
         if (currentIndex !== turnIndex) {
             const changes = await pipe.post('changes', 'changes', {username, changeId: pipe.currentChangeId.val()}, true)

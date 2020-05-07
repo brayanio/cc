@@ -25,7 +25,7 @@ module.exports = class {
             this.teamB = [monster.username]
 
             const units = [
-                ...que.connected.map(o => {return {username: o.username, speed: getUser(o.username).armor.speed}}),
+                ...que.connected.map(o => {return {username: o.username, speed: getUser(o.username).stats.speed}}),
                 {username: monster.username, speed: monster.stats.speed}
             ]
 
@@ -36,6 +36,7 @@ module.exports = class {
                     return -1
                 return 0
             }).map(unit => unit.username)
+            console.log('TURN ORDER', this.data.turnOrder)
         }
 
         if(que.name === 'pvp'){
@@ -49,6 +50,10 @@ module.exports = class {
                 return 0
             }).map(user => user.username)
         }
+    }
+
+    getMonster(id) {
+        return this.monsters.find((monster) => monster.username === id)
     }
 
     userData() {

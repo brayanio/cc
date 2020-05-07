@@ -1,5 +1,5 @@
 const guid = require('../../utils/guid.js')
-
+const EF = require('../../utils/effect-factory.js')
 module.exports = class {
     constructor(monster) {
         this.username = guid()
@@ -15,6 +15,14 @@ module.exports = class {
             effects: []
         }
     }
+
+   attack(room, target){
+        const a = EF.monsterAttack(this)
+        target.stats.health -= a.damage
+        EF.change(room, {name: this.monster.name},{[target.username]: target.stats}, {
+            damage: a.damage
+        })
+   }
 
     packet() {
         return {

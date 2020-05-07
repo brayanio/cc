@@ -13,6 +13,16 @@ const buff = (effect, is, aint) => {
     }
 }
 
+const monsterAttack = (monster) => {
+    const {damageDie, level} = monster.monster
+    const atk = monster.stats.attack
+
+
+    let a = attack(level, damageDie)
+    a.damage += atk
+    return a
+}
+
 const attack = (amount, damageDie) => {
     const rolls = []
     let damage = 0
@@ -66,11 +76,19 @@ const change = (room, effect, modified, changes)=> room.data.changes.push({
     changes
 })
 
+const changeMonster = (room, modified, changes)=> room.data.changes.push({
+    id: guid(),
+    modified,
+    changes
+})
+
 module.exports = {
     guid,
     attack,
     change,
+    changeMonster,
     heal,
     weaponAttack,
-    buff
+    buff,
+    monsterAttack
 }
