@@ -1,6 +1,6 @@
 import nggt from '../nggt.js'
 
-const pipe = nggt.service('turnIndex', 'changes', {'cacheChanges': []}, 'currentChangeId')
+const pipe = nggt.service('turnIndex', 'changes', {'cacheChanges': []}, 'currentChangeId', 'turnCounter')
 
 const REFRESH_TIME = 2000
 let on = false
@@ -47,6 +47,8 @@ const ability = (room, abilityName, abilityTarget) => {
 pipe.changes.onChange(o => {
     if(o && o.changes[o.changes.length - 1])
         pipe.currentChangeId.change(o.changes[0].id)
+    if(o && o.uiData.turnCounter > pipe.turnCounter.val())
+        pipe.turnCounter.change(o.uiData.turnCounter)
 })
 
 pipe.cacheChanges.onChange(ar => console.log(ar))

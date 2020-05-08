@@ -91,6 +91,7 @@ const turnOver = (room) => {
         room.data.turnIndex = 0
     else
         room.data.turnIndex++
+    room.data.turnCounter++
 }
 
 const userStartTurn = (room) => {

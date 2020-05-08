@@ -12,7 +12,8 @@ module.exports = class {
             health: this.monster.hp + 0,
             attack: this.monster.attack + 0,
             speed: this.monster.speed,
-            effects: []
+            effects: [],
+            name: this.monster.name
         }
     }
 

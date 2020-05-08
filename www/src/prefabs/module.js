@@ -1,6 +1,7 @@
 import Layout from './layout.js'
 import Player from './player.js'
 import Monster from './monster.js'
+import Login from './login.js'
 import SkillBar from './skill-bar.js'
 import ToastContainer from './toast-container.js'
 import Turn from './turn.js'
@@ -10,5 +11,6 @@ export default {
   Monster,
   SkillBar,
   ToastContainer,
-  Turn
+  Turn,
+  Login
 }

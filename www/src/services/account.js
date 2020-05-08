@@ -1,5 +1,5 @@
 import nggt from '../nggt.js'
-import pvp from "./pvp";
+import pvp from "./pvp.js";
 
 const pipe = nggt.service('account')
 

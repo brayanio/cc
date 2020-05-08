@@ -2,7 +2,7 @@
 import nggt from '../nggt.js'
 import Prefabs from '../prefabs/module.js'
 import RoomService from '../services/room.js'
-
+import AccountService from '../services/account.js'
 // consts
 const RoomPipe = RoomService.pipe
 
@@ -36,8 +36,10 @@ export default () => nggt.create({
           )
         )
       )
-    )
+    ),
+      Prefabs.Login()
   ),
+
   run: () => 
     RoomPipe.checkQue.onChange(v =>
       tab.change(v ? 'loading' : 'btn')

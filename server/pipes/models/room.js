@@ -14,9 +14,9 @@ module.exports = class {
 
         this.data = {
             turnIndex: 0,
+            turnCounter: 0,
             changes: []
         }
-
         if(que.name === 'pve'){
             const monster = new Monster(data().Monster.Skeleton)
 
@@ -93,6 +93,7 @@ module.exports = class {
             ],
             effects,
             health,
+            turnCounter: this.data.turnCounter,
             ...optional
         }
     }
