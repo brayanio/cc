@@ -61,14 +61,17 @@ const ability = (username, t, abilityName) => {
     //start turn
     // Refactor into its own function
     //
-    if (room.meta.gameType === 'pvp')
-        userStartTurn(room)
-    else
-        monsterStartTurn(room)
+    if (!room.winner) {
+        if (room.meta.gameType === 'pvp')
+            userStartTurn(room)
+        else
+            monsterStartTurn(room)
+    }
 }
 
 const monsterStartTurn = (room) => {
     const currentMonster = room.getMonster(room.data.turnOrder[room.data.turnIndex])
+    if (!currentMonster) return null
     const target = (e) => {
         if (e.birth.isUser)
             return getUser(e.birth.target)
@@ -81,19 +84,80 @@ const monsterStartTurn = (room) => {
     currentMonster.stats.effects.forEach(effect =>
         runEffectEvent('buff', effect, room, currentMonster, target(effect))
     )
-    let randTarget = getUser(room.teamA[Math.floor(Math.random()*room.teamA.length)])
+    let randTarget = getUser(room.teamA[Math.floor(Math.random() * room.teamA.length)])
     currentMonster.attack(room, randTarget)
     turnOver(room)
 }
 
 const turnOver = (room) => {
+    checkDead(room)
     if (room.data.turnIndex + 1 >= room.data.turnOrder.length)
         room.data.turnIndex = 0
     else
         room.data.turnIndex++
+
     room.data.turnCounter++
 }
+const checkDead = (room) => {
+    let dead = {}
+    room.teamA.forEach(username => {
+        if (getUser(username).stats.health <= 0) {
+            room.remove('teamA', username)
+            dead[username] = getUser(username)
+        }
+    })
+    if (room.monsters)
+        room.teamB.forEach(username => {
+            if (room.getMonster(username).stats.health <= 0) {
+                room.remove('teamB', username)
+                dead[username] = room.getMonster(username)
+            }
+        })
+    else
+        room.teamB.forEach(username => {
+            if (getUser(username).stats.health <= 0) {
+                room.remove('teamB', username)
+                dead[username] = getUser(username)
+            }
+        })
 
+    if (room.teamB.length === 0 && room.teamA.length === 0) {
+        room.data.winner = 'draw'
+    }
+    if (room.teamB.length === 0) {
+        room.data.winner = 'teamA'
+
+        Object.values(dead).forEach(deadUser => {
+                if (deadUser.monster)
+                    Object.keys(deadUser.monster.loot).forEach(skill => {
+                        const chance = deadUser.monster.loot[skill]
+                        const roll = Math.floor(Math.random() * 100)
+                        console.log(roll, chance, roll <= chance, 'roll chance here')
+                        if (roll <= chance)
+                            !room.data.loot ? room.data.loot = [skill] : room.data.loot.push(skill)
+                    })
+            }
+        )
+
+        room.meta.connected.forEach(o => {
+            const user = getUser(o.username)
+            if(user && user.unlockedSkills)
+                room.data.loot.forEach(skill => {
+                    if(!user.unlockedSkills.includes(skill)) {
+                        user.unlockedSkills.push(skill)
+                        user.save()
+                    }})
+        })
+    }
+
+    if (room.teamA.length === 0)
+        room.data.winner = 'teamB'
+    if (room.data.winner)
+        room.data.turnIndex = -69
+    room.data.dead = !room.data.dead ? Object.keys(dead) : room.data.dead.concat(Object.keys(dead))
+// Object.keys(dead).forEach((u) => data[u].disconnect ? data[u].disconnect() : null)
+// console.log(room.data.winner, room.teamA, room.teamB, room.data.dead, 'he;;p[]=asdfg[g')
+}
 const userStartTurn = (room) => {
     const currentUser = getUser(room.data.turnOrder[room.data.turnIndex])
     currentUser.stats.effects.forEach(effect =>
@@ -115,19 +179,19 @@ const turnIndex = (username, changeId) => {
         console.log(RoomPipe[user.roomId].val().data.turnIndex)
         const room = RoomPipe[user.roomId].val()
 
-        if(room.data.changes.length > 0) {
+        if (room.data.changes.length > 0) {
             if (!changeId)
                 return {turnIndex: Math.random()}
-            else{
+            else {
                 let index
                 room.data.changes.find((e, i) => changeId === e.id ? index = i : null)
 
-                if(index === room.data.changes.length - 1)
+                if (index === room.data.changes.length - 1)
                     return {turnIndex: room.data.turnIndex}
                 return {turnIndex: Math.random()}
             }
         }
-                return {turnIndex: room.data.turnIndex}
+        return {turnIndex: room.data.turnIndex}
     }
 }
 

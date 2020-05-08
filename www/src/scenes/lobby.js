@@ -7,10 +7,9 @@ import AccountService from '../services/account.js'
 const RoomPipe = RoomService.pipe
 
 // fns
-const joinQuePVP = () => RoomService.joinQue('Admin', 'pvp', 2)
-const joinQuePVP2 = () => RoomService.joinQue('Admin2', 'pvp', 2)
-const joinQuePVE = () => RoomService.joinQue('Admin', 'pve', 1)
-const leaveQue = () => RoomService.leaveQue('Admin')
+const joinQuePVP = () => RoomService.joinQue('pvp', 2)
+const joinQuePVE = () => RoomService.joinQue( 'pve', 1)
+const leaveQue = () => RoomService.leaveQue()
 const tab = nggt.dataObj('btn')
 
 // nggt
@@ -25,8 +24,7 @@ export default () => nggt.create({
         Prefabs.Tab( 'btn',
           Prefabs.Button('Play Now - PVE', joinQuePVE),
           '<hr>',
-          Prefabs.Button('Player', joinQuePVP),
-          Prefabs.Button('Player 2', joinQuePVP2)
+          Prefabs.Button('Player', joinQuePVP)
         ),
         Prefabs.Tab( 'loading',
           Prefabs.Container('div', ['pad_thick'],

@@ -85,6 +85,17 @@ module.exports = class {
             this.monsters.forEach(monster => optional.monsters[monster.username] = monster.packet())
         }
 
+        if(this.data.dead)
+            optional.dead = this.data.dead
+
+        if(this.data.winner)
+            optional.winner = this.data.winner
+
+        if(this.data.loot)
+            optional.loot = this.data.loot
+
+        optional.team = this.teamA.includes(username) ? 'teamA' : 'teamB'
+
         return {
             abilityData: [
                 abilityPacket(user.weapon.ability.name, user.weapon.ability.target, 0),
@@ -96,6 +107,12 @@ module.exports = class {
             turnCounter: this.data.turnCounter,
             ...optional
         }
+    }
+
+    remove(team, username){
+        const alive = this[team].filter(t => t !== username)
+        this[team] = alive
+        this.data.turnOrder = this.data.turnOrder.filter(t => t !== username)
     }
 
     disconnect(username) {

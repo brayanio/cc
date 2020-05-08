@@ -20,27 +20,31 @@ module.exports = class {
     }
 
     save(){
-        storage.change(o => o.users[this.username] = {
+        const obj = {
             username: this.username,
             not_the_password: this.not_the_password,
-            skills: [],
-            inventory: [],
-            classData: {},
+            skills: this.skills || [],
+            unlockedSkills: this.unlockedSkills || [],
+            inventory: this.inventory || [],
+            classData: this.classData || [],
             weapon: nospace(this.weapon.name),
             armor: nospace(this.armor.name),
             gold: this.gold
-        })
+        }
+
+        if(!storage.val().users)
+            storage.change(o => o.users = {[obj.username]:obj})
+        else
+            storage.change(o => o.users[this.username] = obj)
     }
 
     init(){
-        let user
-        if(this.not_the_password)
-            user = storage.val().users[this.username]
+        let user = storage.val().users[this.username]
         if(!user)
             user = {
                 armor: 'Breastplate',
                 weapon: 'BattleAxe',
-                skills: ['Skeleton', 'Fatigue']
+                skills: []
             }
         this.armor = data().Armor[user.armor]
         this.weapon = data().Weapon[user.weapon]
@@ -52,6 +56,8 @@ module.exports = class {
             effects: [],
             cooldowns: {}
         }
+        this.unlockedSkills = user.unlockedSkills || []
+        this.not_the_password = user.not_the_password || ''
         //remove passive and add to stats.effects
         this.skills.forEach((skill) =>
             skill.effects = skill.effects.filter((effect) => {
@@ -81,6 +87,7 @@ module.exports = class {
         this.roomId = id
         this.queName = null
         delete this.queName
+        this.init()
     }
 
     disconnect() {

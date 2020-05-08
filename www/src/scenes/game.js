@@ -22,7 +22,8 @@ export default () => nggt.create({
                 ),
                 Prefabs.Turn(room),
                 Prefabs.SkillBar(room),
-                Prefabs.ToastContainer()
+                Prefabs.ToastContainer(),
+                Prefabs.Loot()
             )
         }
     ),

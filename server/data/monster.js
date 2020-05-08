@@ -14,7 +14,7 @@ const Data = (name, plural, map, ...vals) => {
   }
   
   let MonsterData = Data('Monster', 'Monsters', (data, e) => data[nospace(e.name)] = e,
-    monster('Skeleton', 1, 50, 50, 8, 6, {'RaiseDead': 33}, 'undead')
+    monster('Skeleton', 1, 50, 15, 8, 6, {'Skeleton': 99}, 'undead')
   )
   
   /*

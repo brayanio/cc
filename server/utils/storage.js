@@ -1,7 +1,7 @@
 const fs = require('fs');
 const nggt = require('./nggt.js');
 
-const WWW = __dirname.replace('server/utils', 'storage')
+const WWW = __dirname.replace('server/utils', 'storage').replace('server\\utils', 'storage')
 const resource = path => `${WWW}/${path}`
 
 let data = null

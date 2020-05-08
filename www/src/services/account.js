@@ -23,4 +23,6 @@ const login = async (username, password) => {
     console.log('obj', obj)
 }
 
-export default {pipe, signup, login}
+const username = () => pipe.account.val() ? pipe.account.val().username : null
+
+export default {pipe, signup, login, username}
