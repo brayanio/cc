@@ -26,15 +26,15 @@ const ability = (username, t, abilityName) => {
     // modify to be used with Monster
     const user = getUser(username)
     const room = RoomPipe[user.roomId].val()
+    const ability = data().Ability[nospace(abilityName)]
     let target
-    if (room.meta.gameType === 'pvp')
+    if (room.meta.gameType === 'pvp' || ability.target === 'self' || ability.taret === 'ally')
         target = getUser(t)
     else
         target = room.getMonster(t)
-    console.log(target, 'here')
+    console.log(target, t, 'here')
     if (room.data.turnOrder[room.data.turnIndex] !== username)
         return null
-    const ability = data().Ability[nospace(abilityName)]
     user.stats.cooldowns[ability.name] = ability.cooldown
     ability.effects = ability.effects.filter(effect => {
         effect.ability = nospace(ability.name)

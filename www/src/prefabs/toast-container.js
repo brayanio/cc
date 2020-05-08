@@ -3,8 +3,8 @@ import Layout from './layout.js'
 import PvpService from '../services/pvp.js'
 const pvp = PvpService.pipe
 
-export default () => Layout.DataObj(pvp.changes, o => (o && o.changes.length > 0) 
-    ? Layout.Map(o.changes, (change) =>
+export default () => Layout.DataObj(pvp.cacheChanges, ar => (ar && ar.changes && ar.changes.length > 0) 
+    ? Layout.Map(ar.changes, (change) =>
             Layout.Join(`</br>`,
             Layout.Article(
                 Layout.Card(
