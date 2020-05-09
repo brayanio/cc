@@ -58,11 +58,9 @@ const getUser = () =>
 
 const ui = () => pipe.room.val().uiData
 
-const ability = (name, abilityTarget) => {
-    //PHONEY
-    console.log('clicked')
+const ability = (name, abilityTarget) =>
     pvp.ability(pipe.room.val(), name, abilityTarget)
-}
+
 pvp.pipe.changes.onChange((changes) => (changes && changes.uiData) ? pipe.room.change(room => room.uiData = changes.uiData) : null)
 
 export default {pipe, joinQue, leaveQue, isUser, getUser, ui, ability}

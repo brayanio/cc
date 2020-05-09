@@ -1,9 +1,11 @@
 module.exports = {
-  BasicAttack: require('./basic-attack.js'),
+  BattleAxe: require('./battle-axe.js'),
+  Breastplate: require('./breastplate.js'),
   Fatigue: require('./fatigue.js'),
-  Heal: require('./heal.js'),
   Skeleton: require('./skeleton.js'),
   Fury: require('./fury.js'),
   Rage: require('./rage.js'),
   Bleed: require('./bleed.js'),
+  NecromancerBonus: require('./class-effects/necromancer-bonus.js'),
+  NecromancerMulti: require('./class-effects/necromancer-multi.js'),
 }

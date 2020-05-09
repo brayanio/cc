@@ -21,7 +21,9 @@ module.exports = class {
         const a = EF.monsterAttack(this)
         target.stats.health -= a.damage
         EF.change(room, {name: this.monster.name},{[target.username]: target.stats}, {
-            damage: a.damage
+            Damage: a.damage,
+            mob: this.monster.name,
+            [`[${a.rolls.join(',')}] + ${a.atk}`]: 'Roll'
         })
    }
 

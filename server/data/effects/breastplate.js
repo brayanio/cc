@@ -3,8 +3,8 @@ const r = require('../rarity.js')
 module.exports = (room, caster, target, effect) => {
     const {total} = EF.heal(caster, r)
 
-    if(target.stats.health + total >= target.armor.hp) {
-        target.stats.health = target.armor.hp
+    if(target.stats.health + total >= target.stats.maxHealth) {
+        target.stats.health = target.stats.maxHealth
     } else {
         target.stats.health += total
     }

@@ -15,7 +15,7 @@ const weapon = (name, attack, rarity, level, damageDie, ability) => {
 }
 
 let weaponData = Data('Weapon', 'Weapons', (data, e) => data[nospace(e.name)] = e,
-    weapon('Battle Axe', 4, 'Common', 1, 8, ability.Ability.BasicAttack)
+    weapon('Battle Axe', 4, 'Common', 1, 8, ability.Ability.BattleAxe)
 )
 
 /*

@@ -8,41 +8,53 @@ const RoomPipe = RoomService.pipe
 
 // fns
 const joinQuePVP = () => RoomService.joinQue('pvp', 2)
-const joinQuePVE = () => RoomService.joinQue( 'pve', 1)
+const joinQuePVE = () => RoomService.joinQue('pve', 1)
+const joinQueBoss = () => RoomService.joinQue('boss', 3)
 const leaveQue = () => RoomService.leaveQue()
 const tab = nggt.dataObj('btn')
 
 // nggt
 export default () => nggt.create({
-  isRoot: true,
-  classList: ['lobby'],
-  template: Prefabs.Article(
-    Prefabs.El('h1', 'Lobby'),
-    Prefabs.Card(
-      Prefabs.Header('PvE'),
-      Prefabs.Tabs( tab,
-        Prefabs.Tab( 'btn',
-          Prefabs.Button('Play Now - PVE', joinQuePVE),
-          '<hr>',
-          Prefabs.Button('Player', joinQuePVP)
+    isRoot: true,
+    classList: ['lobby'],
+    template: Prefabs.Join(
+        Prefabs.El('h1', Prefabs.DataObj(AccountService.pipe.account, account => account ? account.map : '... Lobby')),
+        '<a href="#/skills">Skills</a>',
+        '<br>',
+        '<br>',
+        Prefabs.Tabs(tab,
+            Prefabs.Tab('btn',
+                Prefabs.Section(
+                    Prefabs.Card(
+                        Prefabs.Header('Single Player'),
+                        Prefabs.Button('Explore ' + Prefabs.DataObj(AccountService.pipe.account, account => account ? account.map : '... Lobby'), joinQuePVE)
+                    ),
+                    Prefabs.Card(
+                        Prefabs.Header('Players versus Boss (3vBoss)'),
+                        Prefabs.Button( Prefabs.DataObj(AccountService.pipe.account, account => account ? account.map : '... Lobby') + 'Boss Que', joinQueBoss)
+                    ),
+                    Prefabs.Card(
+                        Prefabs.Header('Player versus Player (1v1)'),
+                        Prefabs.Button('Enter Que', joinQuePVP)
+                    )
+                )
+            ),
+            Prefabs.Tab('loading',
+                Prefabs.Container('div', ['pad_thick'],
+                    Prefabs.Bold('Loading...'),
+                    `<br>`,
+                    Prefabs.Button('Cancel', leaveQue)
+                )
+            )
         ),
-        Prefabs.Tab( 'loading',
-          Prefabs.Container('div', ['pad_thick'],
-            Prefabs.Bold('Loading...'),
-            `<br>`,
-            Prefabs.Button('Cancel', leaveQue)
-          )
-        )
-      )
+        Prefabs.Login()
     ),
-      Prefabs.Login()
-  ),
 
-  run: () => 
-    RoomPipe.checkQue.onChange(v =>
-      tab.change(v ? 'loading' : 'btn')
-    ),
-  cleanup: () => {
-    RoomPipe.checkQue.clear()
-  }
+    run: () =>
+        RoomPipe.checkQue.onChange(v =>
+            tab.change(v ? 'loading' : 'btn')
+        ),
+    cleanup: () => {
+        RoomPipe.checkQue.clear()
+    }
 })

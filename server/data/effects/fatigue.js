@@ -4,7 +4,7 @@ module.exports = (room, caster, target, effect) => {
 
     let status = {}
     if(effect.start==='buff')
-        status.weaken = 2
+        status['Attack Reduction'] = 2
     else
         status.removeBuff = true
 

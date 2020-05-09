@@ -14,15 +14,22 @@ const effect = (name, duration, start, ...tags) => {
 }
 
 let EffectData = Data('Effect', 'Effects', (data, e) => data[nospace(e.name)] = e,
-    effect('Basic Attack', 0, 'instant'),
-    effect('Heal', 0, 'instant'),
+    effect('Battle Axe', 0, 'instant'),
+    effect('Breastplate', 0, 'instant'),
 
     //Skills
-    effect('Skeleton', 2, 'turnend', 'pet'),
+    effect('Skeleton', 3, 'turnstart', 'pet'),
     effect('Fatigue', 3, 'buff', 'buff'),
+
     effect('Rage', null, 'turnstart', 'passive'),
     effect('Fury', null, 'buff', 'buff'),
-    effect('Bleed', 1, 'turnend')
+    effect('Bleed', 1, 'turnend'),
+
+
+    // Class Bonuses
+    // Necromancy
+    effect('NecromancerBonus', null, 'turnstart', 'passive'),
+    effect('NecromancerMulti', null, 'buff', 'passive'),
 )
 
 /*

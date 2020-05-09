@@ -15,17 +15,19 @@ const nospace = str => str.split(' ').join('')
 const weaponAbility = (name, event, target, ...effects) => {
     return {name, event, target, effects, abilityType: 'weapon'}
 }
-
-const skillAbility = (name, cooldown, target, ...effects) => {
+const armorAbility = (name, cooldown, target, ...effects) => {
     return {name, cooldown, target, effects, abilityType: 'skill'}
 }
-let AbilityData = Data('Ability', 'Abilitys', (data, e) => data[nospace(e.name)] = e,
-    weaponAbility('Basic Attack', 'attack', 'enemy', effects().Effect.BasicAttack),
+const skillAbility = (name, cooldown, target, className, ...effects) => {
+    return {name, cooldown, target, effects, className, abilityType: 'skill'}
+}
+let AbilityData = Data('Ability', 'Abilities', (data, e) => data[nospace(e.name)] = e,
+    weaponAbility('Battle Axe', 'attack', 'enemy', effects().Effect.BattleAxe),
     //armor
-    skillAbility('Heal', 5, 'self', effects().Effect.Heal),
+    armorAbility('Breastplate', 5, 'self', effects().Effect.Breastplate),
     //skills
-    skillAbility('Skeleton', 0, 'self', effects().Effect.Skeleton, effects().Effect.Skeleton),
-    skillAbility('Fatigue', 2, 'enemy', effects().Effect.Fatigue),
+    skillAbility('Skeleton', 0, 'self','Necromancer', effects().Effect.Skeleton, effects().Effect.Skeleton),
+    skillAbility('Fatigue', 3, 'enemy', 'Necromancer', effects().Effect.Fatigue),
     // skillAbility('Rage', 3, 'self', effects().Effect.Rage, effects().Effect.Fury, effects().Effect.Fury),
     // skillAbility('Gore', 0, 'enemy', effects().Effect.Bleed)
 )

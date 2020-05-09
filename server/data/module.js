@@ -4,6 +4,7 @@ module.exports = () => {
     let obj = cloneData({
         ...require('./game.js'),
         ...require('./ability.js'),
+        ...require('./classes.js'),
         ...require('./armor.js'),
         ...require('./monster.js'),
         ...require('./rarity.js'),

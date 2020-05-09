@@ -16,11 +16,10 @@ const checkTurnIndex = async (username) => {
         await pipe.post('turnIndex', 'turn-index', {username, changeId: pipe.currentChangeId.val()}, false)
         const turnIndex = pipe.turnIndex.val().turnIndex
         if (currentIndex !== turnIndex) {
-            const changes = await pipe.post('changes', 'changes', {username, changeId: pipe.currentChangeId.val()}, true)
+            const changes = await pipe.post('changes', 'changes', {username, changeId: pipe.currentChangeId.val()}, false)
             currentIndex = turnIndex
             if(changes.changes && changes.changes.length > 0)
                 pipe.cacheChanges.change(ar => ar.push(changes))
-            console.log('CHANGES', changes)
         }
         setTimeout(() => checkTurnIndex(username), REFRESH_TIME)
     }
@@ -41,7 +40,7 @@ const ability = (room, abilityName, abilityTarget) => {
     if(abilityTarget === 'self')
         target = room.username
 
-    pipe.send('ability', {username, target, ability: abilityName}, true)
+    pipe.send('ability', {username, target, ability: abilityName}, false)
 }
 
 pipe.changes.onChange(o => {

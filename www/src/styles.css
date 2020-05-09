@@ -1,10 +1,11 @@
 @import url("../nggt/layout/styles/layout.css");
 @import url("../libs/glcss/styles/gl.css");
 @import url("./styles/game.css");
+@import url("./styles/lobby.css");
 /* @import url("../libs/sprite/styles/sprite.css"); */
 
 button {
-  padding: 1rem 1.75rem;
+  padding: 0.25rem 1rem;
   margin: 2px;
 }
 
@@ -23,6 +24,25 @@ body > main, body > footer{
 body > header, nav{
   margin-bottom: 0; 
   padding-bottom: 0; 
+}
+
+sup{
+  font-size: 1rem;
+}
+
+sup.health{
+  padding: .25rem .75rem;
+  background-color: hotpink;
+}
+
+.demo{
+  border: 2px dashed gray;
+  margin: 0.5rem;
+  padding: 0.5rem;
+}
+
+.header{
+  font-size: 1.5rem;
 }
 
 .passive{
@@ -50,4 +70,37 @@ body > header, nav{
 
 .modal aside, .modal form{
   background-color: white;
+}
+
+.skill-bar button{
+  background-color: transparent;
+  color: rgba(0,0,0,0.8);
+  border: 4px;
+}
+
+.skill-bar button img{
+  background-color: rgba(0,0,0,0.15);
+  border-radius: 100%;
+  padding: 10px;
+  box-shadow: 0px 3px 5px rgba(0, 0, 0, 0.3), inset 0px -3px 5px rgba(0, 0, 0, 0.3);
+}
+.skill-bar button img:not(:hover){
+  animation: refresh .25s;
+  /*transition: .25s;*/
+}
+@keyframes refresh{
+  0%{
+    transform: scale(0.95);
+  }
+  80%{
+    transform: scale(1.05);
+  }
+  100%{
+    transform: scale(1);
+  }
+}
+.skill-bar button img:hover {
+  /*background-color: rgba(0,0,0,0);*/
+  transform: scale(1.2);
+  /*box-shadow: none;*/
 }

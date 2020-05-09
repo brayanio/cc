@@ -17,9 +17,9 @@ const monsterAttack = (monster) => {
     const {damageDie, level} = monster.monster
     const atk = monster.stats.attack
 
-
     let a = attack(level, damageDie)
     a.damage += atk
+    a.atk = atk
     return a
 }
 
@@ -27,7 +27,7 @@ const attack = (amount, damageDie) => {
     const rolls = []
     let damage = 0
     for (let i = 0; i < amount; i++) {
-        const val = Math.floor(Math.random() * damageDie) + 1
+        const val = Math.ceil(Math.random() * damageDie)
         rolls.push(val)
         damage += val
     }

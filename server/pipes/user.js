@@ -32,4 +32,22 @@ const login = (username, not_the_password) => {
     return newUser.packet()
 }
 
-module.exports = {getUser, ...cachePipe, signup, login}
+const equipSkill = (username, skill) => {
+    const user = getUser(username)
+    if(user.unlockedSkills.includes(skill)) {
+        user.skills.push(data().Ability[skill])
+        user.unlockedSkills = user.unlockedSkills.filter((s) => skill !== s)
+        user.save()
+    }
+    return user.packet()
+}
+const unequipSkill = (username, skill) => {
+    const user = getUser(username)
+    if(user.skills.find(s => s.name === skill)) {
+        user.unlockedSkills.push(skill)
+        user.skills = user.skills.filter((s) => skill !== s.name)
+        user.save()
+    }
+    return user.packet()
+}
+module.exports = {getUser, ...cachePipe, signup, login, equipSkill, unequipSkill}

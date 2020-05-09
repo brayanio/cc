@@ -15,11 +15,8 @@ const doEffect = (room, caster, target, effect) =>
     data().EffectFn[nospace(effect.name)](room, caster, target, effect)
 
 const runEffectEvent = (start, effect, room, user, targetUser) => {
-    if (effect.start === start) {
-        const ability = data().Ability[effect.ability]
-        if (ability)
-            doEffect(room, user, targetUser, effect)
-    }
+    if (effect.start === start)
+        doEffect(room, user, targetUser, effect)
 }
 
 const ability = (username, t, abilityName) => {
@@ -32,7 +29,7 @@ const ability = (username, t, abilityName) => {
         target = getUser(t)
     else
         target = room.getMonster(t)
-    console.log(target, t, 'here')
+    // console.log(target, t, 'here')
     if (room.data.turnOrder[room.data.turnIndex] !== username)
         return null
     user.stats.cooldowns[ability.name] = ability.cooldown
@@ -60,12 +57,12 @@ const ability = (username, t, abilityName) => {
     turnOver(room)
     //start turn
     // Refactor into its own function
-    //
+    let userData = room.data.turnOrder[room.data.turnIndex]
     if (!room.winner) {
-        if (room.meta.gameType === 'pvp')
-            userStartTurn(room)
-        else
+        if(room.getMonster(userData))
             monsterStartTurn(room)
+        else
+            userStartTurn(room)
     }
 }
 
@@ -73,20 +70,40 @@ const monsterStartTurn = (room) => {
     const currentMonster = room.getMonster(room.data.turnOrder[room.data.turnIndex])
     if (!currentMonster) return null
     const target = (e) => {
-        if (e.birth.isUser)
-            return getUser(e.birth.target)
+        if (!room.getMonster(e) || !room.getMonster(e).monster)
+            return getUser(e)
         else
-            return room.getMonster(e.birth.target)
+            return room.getMonster(e)
     }
     currentMonster.stats.effects.forEach(effect =>
-        runEffectEvent('turnstart', effect, room, currentMonster, target(effect))
+        runEffectEvent('turnstart', effect, room, target(effect.birth.username), target(effect.birth.target))
     )
     currentMonster.stats.effects.forEach(effect =>
-        runEffectEvent('buff', effect, room, currentMonster, target(effect))
+        runEffectEvent('buff', effect, room, target(effect.birth.username), target(effect.birth.target))
     )
     let randTarget = getUser(room.teamA[Math.floor(Math.random() * room.teamA.length)])
     currentMonster.attack(room, randTarget)
+
+    currentMonster.stats.effects = currentMonster.stats.effects.filter(effect => {
+        runEffectEvent('turnend', effect, room, currentMonster, target(effect))
+        if (!effect.tags.includes('passive') && effect.duration)
+            effect.duration--
+        if (effect.duration === 0 && effect.duration !== null) {
+            runEffectEvent('remove', effect, room, currentMonster, target(effect))
+            return false
+        }
+        return true
+    })
+
     turnOver(room)
+    let userData = room.data.turnOrder[room.data.turnIndex]
+    if (!room.winner) {
+        if(room.getMonster(userData))
+            monsterStartTurn(room)
+        else
+            userStartTurn(room)
+    }
+    checkDead(room)
 }
 
 const turnOver = (room) => {
@@ -106,7 +123,7 @@ const checkDead = (room) => {
             dead[username] = getUser(username)
         }
     })
-    if (room.monsters)
+    if (room.meta.gameType === 'pve')
         room.teamB.forEach(username => {
             if (room.getMonster(username).stats.health <= 0) {
                 room.remove('teamB', username)
@@ -132,7 +149,30 @@ const checkDead = (room) => {
                     Object.keys(deadUser.monster.loot).forEach(skill => {
                         const chance = deadUser.monster.loot[skill]
                         const roll = Math.floor(Math.random() * 100)
-                        console.log(roll, chance, roll <= chance, 'roll chance here')
+                        const exp = [1, 15, 100][deadUser.monster.level]
+                        room.teamA.forEach(username => {
+                            const user = getUser(username)
+                            if(user.skills[0]) {
+                                let c = user.classData[user.skills[0].className]
+                                if (!c)
+                                    c = user.classData[user.skills[0].className] = {
+                                        level: 1,
+                                        exp: 0
+                                    }
+                                c.exp += exp
+                            }
+                            if(user.skills[1]) {
+                                user.skills[1]
+                                c = user.classData[user.skills[1].className]
+                                if (!c)
+                                    c = user.classData[user.skills[1].className] = {
+                                        level: 1,
+                                        exp: 0
+                                    }
+                                c.exp += exp
+                            }
+                        })
+                        // console.log(roll, chance, roll <= chance, 'roll chance here')
                         if (roll <= chance)
                             !room.data.loot ? room.data.loot = [skill] : room.data.loot.push(skill)
                     })
@@ -141,9 +181,9 @@ const checkDead = (room) => {
 
         room.meta.connected.forEach(o => {
             const user = getUser(o.username)
-            if(user && user.unlockedSkills)
+            if(user && user.unlockedSkills && room.data.loot)
                 room.data.loot.forEach(skill => {
-                    if(!user.unlockedSkills.includes(skill)) {
+                    if(!user.unlockedSkills.includes(skill) && !user.skills.find(s => s.name === skill)) {
                         user.unlockedSkills.push(skill)
                         user.save()
                     }})
@@ -160,6 +200,7 @@ const checkDead = (room) => {
 }
 const userStartTurn = (room) => {
     const currentUser = getUser(room.data.turnOrder[room.data.turnIndex])
+    console.log(currentUser.stats.effects.filter(e => e.start === 'turnstart'))
     currentUser.stats.effects.forEach(effect =>
         runEffectEvent('turnstart', effect, room, currentUser, getUser(effect.birth.target))
     )
@@ -171,12 +212,13 @@ const userStartTurn = (room) => {
             if (currentUser.stats.cooldowns[abilityname] - 1 >= 0)
                 currentUser.stats.cooldowns[abilityname]--
         })
+    checkDead(room)
 }
 
 const turnIndex = (username, changeId) => {
     const user = getUser(username)
     if (user && user.roomId) {
-        console.log(RoomPipe[user.roomId].val().data.turnIndex)
+        // console.log(RoomPipe[user.roomId].val().data.turnIndex)
         const room = RoomPipe[user.roomId].val()
 
         if (room.data.changes.length > 0) {
@@ -208,4 +250,7 @@ const changes = (username, changeId) => {
         return {changes: room.data.changes.slice(index + 1).reverse(), uiData: room.uiData(username)}
     }
 }
+
+
+
 module.exports = {RoomPipe, ability, turnIndex, changes}

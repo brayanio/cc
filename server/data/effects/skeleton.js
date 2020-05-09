@@ -15,7 +15,7 @@ module.exports = (room, caster, target, effect) => {
     target.stats.health -= damage
 
     EF.change(room, effect, {[target.username]: target.stats},{
-        damage,
-        rolls
+        'Damage': damage
+        // [`[${rolls.join(',')}]`]: 'Roll'
     })
 }

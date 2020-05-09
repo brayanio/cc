@@ -39,7 +39,12 @@ module.exports = class {
             console.log('TURN ORDER', this.data.turnOrder)
         }
 
+        this.teamA.forEach(username => getUser(username).applyPassives(this, getUser(username), getUser(username)))
+
         if(que.name === 'pvp'){
+            this.teamA= [que.connected[0].username]
+            this.teamB= [que.connected[1].username]
+            this.teamB.forEach(username => getUser(username).applyPassives(this, getUser(username), getUser(username)))
             this.data.turnOrder = que.connected.sort((o1, o2) => {
                 const user1 = getUser(o1.username)
                 const user2 = getUser(o2.username)
@@ -50,6 +55,8 @@ module.exports = class {
                 return 0
             }).map(user => user.username)
         }
+
+
     }
 
     getMonster(id) {
@@ -73,7 +80,8 @@ module.exports = class {
         this.meta.connected.forEach(o => {
             const User = getUser(o.username)
             effects[o.username] = User.stats.effects
-            health[o.username] = User.stats.health
+            // console.log('hphphphphp necro issue', User.uiData().health, User.uiData().effects)
+            health[o.username] = User.uiData().health
         })
         
         const abilityPacket = (name, target, cooldown) => {
@@ -94,7 +102,10 @@ module.exports = class {
         if(this.data.loot)
             optional.loot = this.data.loot
 
-        optional.team = this.teamA.includes(username) ? 'teamA' : 'teamB'
+        if(this.teamA.includes(username))
+            optional.team = 'teamA'
+        if(this.teamB.includes(username))
+            optional.team = 'teamB'
 
         return {
             abilityData: [
