@@ -23,6 +23,16 @@ const login = async (username, password) => {
     console.log('[login]', obj)
 }
 
+const skillUiData = async () => {
+    let obj = await pipe.post('account', 'skills-uidata', {username: pipe.account.val() && pipe.account.val().username}, false)
+    if(obj.error) {
+        console.error('LOGIN ERROR:', obj)
+        return false
+    }
+    //We have the account
+    console.log('[skills-uidata]', obj)
+}
+
 const equipSkill = async (skill) => {
     let obj = await pipe.post('account', 'equip-skill', {username: username(), skill}, true)
     if(obj.error) {
@@ -45,4 +55,4 @@ const username = () => pipe.account.val() ? pipe.account.val().username : null
 
 pipe.account.onChange(account => account ? document.body.setAttribute('class', account.map) : null)
 
-export default {pipe, signup, login, username, equipSkill, unequipSkill}
+export default {pipe, signup, login, username, equipSkill, unequipSkill, skillUiData}

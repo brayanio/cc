@@ -5,3 +5,57 @@
 .game section aside{
     box-shadow: none;
 }
+
+.game .duration{
+    position: relative;
+    font-size: 1.2rem;
+    color: white;
+    background-color: rgba(0,0,0,0.3);
+    border-radius: 100%;
+    padding: .2rem .6rem;
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    left: -15px;
+}
+
+.mob-target div > img{
+    animation: mob-idle 3s infinite;
+}
+@keyframes mob-idle {
+    0%{
+        transform: rotateX(0) translateY(0px);
+    }
+    30%{
+        transform: rotateX(-15deg) translateY(6px);
+    }
+    80%{
+        transform: rotateX(5deg) translateY(2px);
+    }
+    100%{
+        transform: rotateX(0) translateY(0px);
+    }
+}
+
+.mob-target button{
+    background-color: rgba(255, 0, 0, 0.25);
+    border-color: red;
+    box-shadow: 0px 3px 5px rgba(0, 0, 0, 0.3), inset 0px -3px 5px rgba(0, 0, 0, 0.3);
+}
+
+.mob-target button img{
+    animation: mob-shake 1.2s infinite;
+}
+@keyframes mob-shake {
+    0% { transform: translate(1px, 1px) rotate(0deg); }
+    10% { transform: translate(-1px, -2px) rotate(-1deg); }
+    20% { transform: translate(-3px, 0px) rotate(1deg); }
+    30% { transform: translate(3px, 2px) rotate(0deg); }
+    40% { transform: translate(1px, -1px) rotate(1deg); }
+    50% { transform: translate(-1px, 2px) rotate(-1deg); }
+    60% { transform: translate(-3px, 1px) rotate(0deg); }
+    70% { transform: translate(3px, 1px) rotate(-1deg); }
+    80% { transform: translate(-1px, -1px) rotate(1deg); }
+    90% { transform: translate(1px, 2px) rotate(0deg); }
+    100% { transform: translate(1px, -2px) rotate(-1deg); }
+}

@@ -27,7 +27,7 @@ export default (user) => Layout.Card(
 
         return Layout.El('div',
             Layout.Map(o.uiData.effects[user.username], (effect) => (effect) ?
-                Layout.Container('span', effect.tags, `${src(effect) ? `<img src="${src(effect)}" width="64px">` : (effect.name + '<br>')}`) : '')
+                Layout.Container('span', effect.tags, `${src(effect) ? `<img src="${src(effect)}" width="64px"><span class="duration">${effect.duration}</span>` : (effect.name + '<br>')}`) : '')
             )
         }
     )

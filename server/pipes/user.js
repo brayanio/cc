@@ -50,4 +50,9 @@ const unequipSkill = (username, skill) => {
     }
     return user.packet()
 }
-module.exports = {getUser, ...cachePipe, signup, login, equipSkill, unequipSkill}
+
+const skillUiPacket = (username) => {
+    const user = getUser(username)
+    return user.packet()
+}
+module.exports = {getUser, ...cachePipe, signup, login, equipSkill, unequipSkill, skillUiPacket}

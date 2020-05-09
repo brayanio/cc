@@ -19,14 +19,16 @@ module.exports = class {
         }
         if(que.name === 'pve'){
             const monster = new Monster(data().Monster.Skeleton)
+            const monster2 = new Monster(data().Monster.Skeleton)
 
-            this.monsters.push(monster)
+            this.monsters.push(monster, monster2)
             this.teamA = que.connected.map(o => o.username)
-            this.teamB = [monster.username]
+            this.teamB = [monster.username, monster2.username]
 
             const units = [
                 ...que.connected.map(o => {return {username: o.username, speed: getUser(o.username).stats.speed}}),
-                {username: monster.username, speed: monster.stats.speed}
+                {username: monster.username, speed: monster.stats.speed},
+                {username: monster2.username, speed: monster2.stats.speed}
             ]
 
             this.data.turnOrder = units.sort((o1, o2) => {

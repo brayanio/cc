@@ -2,6 +2,14 @@ const nggt = require('../utils/nggt.js')
 const data = require('../data/module.js')
 const EF = require('../utils/effect-factory.js')
 
+const MONSTER_EXP_TABLE = [1, 1, 15, 100, 250]
+const CLASS_EXP_TABLE = [0, 0, 10, 300, 2000, 12500]
+
+//class levels
+
+// 10 = lv 2 "10 kills", 300 = lv 3 "15 kills", 2000 = lv 4 "20 kills", 12500 = lv 5 "50 kills"
+
+
 // pipes
 const UserPipe = require('./user.js')
 const RoomPipe = nggt.pipe()
@@ -35,7 +43,7 @@ const ability = (username, t, abilityName) => {
     user.stats.cooldowns[ability.name] = ability.cooldown
     ability.effects = ability.effects.filter(effect => {
         effect.ability = nospace(ability.name)
-        effect.birth = {username, t, isUser: room.meta.gameType === 'pvp'}
+        effect.birth = {username, target: t, isUser: room.meta.gameType === 'pvp'}
         runEffectEvent('instant', effect, room, user, target)
         runEffectEvent('buff', effect, room, user, target)
         return effect.start !== 'instant' && !effect.tags.includes('passive')
@@ -85,11 +93,11 @@ const monsterStartTurn = (room) => {
     currentMonster.attack(room, randTarget)
 
     currentMonster.stats.effects = currentMonster.stats.effects.filter(effect => {
-        runEffectEvent('turnend', effect, room, currentMonster, target(effect))
+        runEffectEvent('turnend', effect, room, target(effect.birth.username), target(effect.birth.target))
         if (!effect.tags.includes('passive') && effect.duration)
             effect.duration--
         if (effect.duration === 0 && effect.duration !== null) {
-            runEffectEvent('remove', effect, room, currentMonster, target(effect))
+            runEffectEvent('remove', effect, room, target(effect.birth.username), target(effect.birth.target))
             return false
         }
         return true
@@ -149,7 +157,7 @@ const checkDead = (room) => {
                     Object.keys(deadUser.monster.loot).forEach(skill => {
                         const chance = deadUser.monster.loot[skill]
                         const roll = Math.floor(Math.random() * 100)
-                        const exp = [1, 15, 100][deadUser.monster.level]
+                        const exp = MONSTER_EXP_TABLE[deadUser.monster.level]
                         room.teamA.forEach(username => {
                             const user = getUser(username)
                             if(user.skills[0]) {
@@ -160,6 +168,19 @@ const checkDead = (room) => {
                                         exp: 0
                                     }
                                 c.exp += exp
+                                if(c.exp >= CLASS_EXP_TABLE[c.level]) {
+                                    c.level++
+                                    c.exp -= CLASS_EXP_TABLE[c.level]
+                                    const classData = data().ClassData[user.skills[0].className]
+                                    // console.log('LEVELS', classData.skills, c.level)
+                                    classData.skills.forEach(skill => {
+                                        if(skill.classLevel === c.level){
+                                            user.unlockedSkills.push(skill.name)
+                                            // console.log('LEVELED UP', user.unlockedSkills)
+                                            user.save()
+                                        }
+                                    })
+                                }
                             }
                             if(user.skills[1]) {
                                 user.skills[1]
@@ -170,6 +191,17 @@ const checkDead = (room) => {
                                         exp: 0
                                     }
                                 c.exp += exp
+                                if(c.exp >= CLASS_EXP_TABLE[c.level]) {
+                                    c.level++
+                                    c.exp -= CLASS_EXP_TABLE[c.level]
+                                    const classData = data().ClassData[user.skills[1].className]
+                                    classData.skills.forEach(skill => {
+                                        if(skill.level === c.level){
+                                            user.unlockedSkills.push(skill.name)
+                                            user.save()
+                                        }
+                                    })
+                                }
                             }
                         })
                         // console.log(roll, chance, roll <= chance, 'roll chance here')
@@ -200,7 +232,7 @@ const checkDead = (room) => {
 }
 const userStartTurn = (room) => {
     const currentUser = getUser(room.data.turnOrder[room.data.turnIndex])
-    console.log(currentUser.stats.effects.filter(e => e.start === 'turnstart'))
+    // console.log(currentUser.stats.effects.filter(e => e.start === 'turnstart'))
     currentUser.stats.effects.forEach(effect =>
         runEffectEvent('turnstart', effect, room, currentUser, getUser(effect.birth.target))
     )

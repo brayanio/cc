@@ -6,11 +6,12 @@ module.exports = (room, caster, target, effect) => {
     if(effect.start==='buff')
         status['Attack Reduction'] = 2
     else
-        status.removeBuff = true
+        status['Removed'] = 'Buff'
 
     EF.buff(effect, ()=>{
         target.stats.attack -= 2
     }, ()=>{
+        // console.log('Fatigue Target', target.username)
         target.stats.attack += 2
     })
 

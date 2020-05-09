@@ -59,6 +59,8 @@ export default () => nggt.create({
     ),
 
     run: () => {
+        if(AccountService.pipe.account.val())
+            AccountService.skillUiData()
     },
     cleanup: () => {
     }

@@ -18,7 +18,7 @@ let EffectData = Data('Effect', 'Effects', (data, e) => data[nospace(e.name)] = 
     effect('Breastplate', 0, 'instant'),
 
     //Skills
-    effect('Skeleton', 3, 'turnstart', 'pet'),
+    effect('Skeleton', 2, 'turnend', 'pet'),
     effect('Fatigue', 3, 'buff', 'buff'),
 
     effect('Rage', null, 'turnstart', 'passive'),

@@ -9,7 +9,7 @@ let data = null
 const save = () => {
   const obj = data.val()
   fs.writeFileSync(resource('storage.json'), JSON.stringify(obj), 'utf8')
-  console.log('[storage][saved]', obj)
+  // console.log('[storage][saved]', obj)
 }
 
 let exists = fs.existsSync(resource('storage.json'))
@@ -20,6 +20,6 @@ if(exists)
 let dataobj = nggt.dataObj(obj)
 dataobj.onChange(obj => data ? save() : null)
 data = dataobj
-console.log('[storage][loaded]', data.val())
+// console.log('[storage][loaded]', data.val())
 
 module.exports = data
