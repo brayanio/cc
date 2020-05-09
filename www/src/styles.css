@@ -65,6 +65,8 @@ sup.health{
 
 .modal{
   margin: 5%;
+  overflow-y: auto;
+  max-height: 85%;
   /*background: white;*/
 }
 
