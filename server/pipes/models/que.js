@@ -5,10 +5,11 @@ const room = require('../room.js')
 const RoomPipe = room.RoomPipe
 
 module.exports = class {
-    constructor(name, username, playerCount) {
+    constructor(name, username, playerCount, mapName) {
         this.name = name
         this.playerCount = playerCount
         this.connected = []
+        this.mapName = mapName
         this.connect(username)
     }
 

@@ -13,9 +13,9 @@ const nospace = str => str.split(' ').join('')
 const map = (name, ...monsters) => {
     return {name, monsters}
 }
-
 let map = Data('Map', 'Maps', (data, e) => data[nospace(e.name)] = e,
-    map('Tomb', 'Skeleton'),
+    map('Tomb','Skeleton'),
+
 )
 
 /*

@@ -9,7 +9,7 @@ const Monster = require('./monster.js')
 module.exports = class {
     constructor(que) {
         this.id = guid()
-        this.meta = {connected: que.connected, gameType: que.name, playerCount: que.playerCount}
+        this.meta = {connected: que.connected, gameType: que.name, playerCount: que.playerCount, mapName: que.mapName}
         this.monsters = []
 
         this.data = {
@@ -39,14 +39,42 @@ module.exports = class {
                 return 0
             }).map(unit => unit.username)
             console.log('TURN ORDER', this.data.turnOrder)
+            this.teamA.forEach(username => getUser(username).applyPassives(this, getUser(username), getUser(username)))
+        }
+        if(que.name === 'raid'){
+           let raids = data().Raids[this.meta.mapName]
+
+            const raid1 = raids[Math.floor(Math.random()*raids.length)]
+            const raid2 = raids[Math.floor(Math.random()*raids.length)]
+            const raid3 = raids[Math.floor(Math.random()*raids.length)]
+            const boss = raids[Math.floor(Math.random()*raids.length)]
+
+            raid1.forEach(monster => this.monsters.push(new Monster(data().Monster[monster])))
+            this.teamA = que.connected.map(o => o.username)
+            this.teamB = this.monsters.map(monster => monster.username)
+
+            const units = [
+                ...que.connected.map(o => {return {username: o.username, speed: getUser(o.username).stats.speed}}),
+                ...this.monsters.map(monster => {return {username: monster.username, speed: monster.speed}}),
+            ]
+
+            this.waves = [raid2, raid3, boss]
+            this.data.turnOrder = units.sort((o1, o2) => {
+                if (o1.speed < o2.speed)
+                    return 1
+                if (o1.speed > o2.speed)
+                    return -1
+                return 0
+            }).map(unit => unit.username)
+            console.log('TURN ORDER', this.data.turnOrder)
+            this.teamA.forEach(username => getUser(username).applyPassives(this, getUser(username), getUser(username)))
         }
 
-        this.teamA.forEach(username => getUser(username).applyPassives(this, getUser(username), getUser(username)))
 
         if(que.name === 'pvp'){
             this.teamA= [que.connected[0].username]
             this.teamB= [que.connected[1].username]
-            this.teamB.forEach(username => getUser(username).applyPassives(this, getUser(username), getUser(username)))
+
             this.data.turnOrder = que.connected.sort((o1, o2) => {
                 const user1 = getUser(o1.username)
                 const user2 = getUser(o2.username)
@@ -56,6 +84,8 @@ module.exports = class {
                     return -1
                 return 0
             }).map(user => user.username)
+            this.teamA.forEach(username => getUser(username).applyPassives(this, getUser(username), getUser(username)))
+            this.teamB.forEach(username => getUser(username).applyPassives(this, getUser(username), getUser(username)))
         }
 
 
@@ -90,7 +120,7 @@ module.exports = class {
             return {name, target, cooldown}
         }
 
-        if(this.meta.gameType === 'pve'){
+        if(this.meta.gameType === 'pve' || this.meta.gameType === 'raid'){
             optional.monsters = {}
             this.monsters.forEach(monster => optional.monsters[monster.username] = monster.packet())
         }

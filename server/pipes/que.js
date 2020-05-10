@@ -1,22 +1,21 @@
 const nggt = require('../utils/nggt.js')
 const room = require('./room.js')
-
 const UserPipe = require('./user.js')
 const RoomPipe = room.RoomPipe
 const QuePipe = nggt.pipe()
-
 const Que = require('./models/que.js')
-
+// utils
+const getUser = username => UserPipe.getUser(username)
 const joinQue = (username, queName, playerCount) => {
     const check = checkQue(username)
     if (!check.error) return check
     if (QuePipe[queName] && QuePipe[queName]) {
         const que = QuePipe[queName].val()
-        que.connect(username)
+        que.connect(username, getUser(username).map)
         const roomCreated = que.checkFull(username, playerCount)
         return roomCreated.packet(username)
     }
-    const queCreated = new Que(queName, username, playerCount)
+    const queCreated = new Que(queName, username, playerCount, getUser(username).map)
     const roomCreated = queCreated.checkFull(username, playerCount)
     if(roomCreated)
         return roomCreated.packet(username)

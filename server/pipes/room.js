@@ -1,7 +1,7 @@
 const nggt = require('../utils/nggt.js')
 const data = require('../data/module.js')
 const EF = require('../utils/effect-factory.js')
-
+const guid = require('../utils/guid.js')
 const MONSTER_EXP_TABLE = [1, 1, 15, 100, 250]
 const CLASS_EXP_TABLE = [0, 0, 10, 300, 2000, 12500]
 
@@ -63,17 +63,17 @@ const ability = (username, t, abilityName) => {
     })
 
     turnOver(room)
-    //start turn
-    // Refactor into its own function
+    runTurn(room)
+}
+const runTurn = (room) => {
     let userData = room.data.turnOrder[room.data.turnIndex]
     if (!room.winner) {
-        if(room.getMonster(userData))
+        if (room.getMonster(userData))
             monsterStartTurn(room)
         else
             userStartTurn(room)
     }
 }
-
 const monsterStartTurn = (room) => {
     const currentMonster = room.getMonster(room.data.turnOrder[room.data.turnIndex])
     if (!currentMonster) return null
@@ -106,7 +106,7 @@ const monsterStartTurn = (room) => {
     turnOver(room)
     let userData = room.data.turnOrder[room.data.turnIndex]
     if (!room.winner) {
-        if(room.getMonster(userData))
+        if (room.getMonster(userData))
             monsterStartTurn(room)
         else
             userStartTurn(room)
@@ -138,7 +138,38 @@ const checkDead = (room) => {
                 dead[username] = room.getMonster(username)
             }
         })
-    else
+    else if (room.meta.gameType === "raid") {
+
+        room.teamB.forEach(username => {
+            if (room.getMonster(username).stats.health <= 0) {
+                room.remove('teamB', username)
+                dead[username] = room.getMonster(username)
+            }
+
+        })
+        if (room.waves && room.teamB.length === 0 && room.waves.length > 0) {
+            /// Add Intermission Ad Here
+            console.log(room.waves[0], 'Start')
+            room.monsters = room.waves.pop().map(monster => {
+                console.log(monster,data().Monster[monster], 'hererererer')
+            const x = new Monster(data().Monster[monster])
+
+                return x
+            })
+            console.log(room.waves, 'End')
+            room.teamB = room.monsters.map(monster => monster.username)
+            room.data.turnOrder = [...room.teamA.map(username => getUser(username)),...room.monsters].sort((o1, o2) => {
+                if (o1.speed < o2.speed)
+                    return 1
+                if (o1.speed > o2.speed)
+                    return -1
+                return 0
+            }).map(unit => unit.username)
+            console.log('TURN ORDER', room.data.turnOrder)
+            room.data.turnIndex = 0
+            runTurn(room)
+        }
+    } else
         room.teamB.forEach(username => {
             if (getUser(username).stats.health <= 0) {
                 room.remove('teamB', username)
@@ -160,7 +191,7 @@ const checkDead = (room) => {
                         const exp = MONSTER_EXP_TABLE[deadUser.monster.level]
                         room.teamA.forEach(username => {
                             const user = getUser(username)
-                            if(user.skills[0]) {
+                            if (user.skills[0]) {
                                 let c = user.classData[user.skills[0].className]
                                 if (!c)
                                     c = user.classData[user.skills[0].className] = {
@@ -168,13 +199,13 @@ const checkDead = (room) => {
                                         exp: 0
                                     }
                                 c.exp += exp
-                                if(c.exp >= CLASS_EXP_TABLE[c.level]) {
+                                if (c.exp >= CLASS_EXP_TABLE[c.level]) {
                                     c.level++
                                     c.exp -= CLASS_EXP_TABLE[c.level]
                                     const classData = data().ClassData[user.skills[0].className]
                                     // console.log('LEVELS', classData.skills, c.level)
                                     classData.skills.forEach(skill => {
-                                        if(skill.classLevel === c.level){
+                                        if (skill.classLevel === c.level) {
                                             user.unlockedSkills.push(skill.name)
                                             // console.log('LEVELED UP', user.unlockedSkills)
                                             user.save()
@@ -182,7 +213,7 @@ const checkDead = (room) => {
                                     })
                                 }
                             }
-                            if(user.skills[1]) {
+                            if (user.skills[1]) {
                                 user.skills[1]
                                 c = user.classData[user.skills[1].className]
                                 if (!c)
@@ -191,12 +222,12 @@ const checkDead = (room) => {
                                         exp: 0
                                     }
                                 c.exp += exp
-                                if(c.exp >= CLASS_EXP_TABLE[c.level]) {
+                                if (c.exp >= CLASS_EXP_TABLE[c.level]) {
                                     c.level++
                                     c.exp -= CLASS_EXP_TABLE[c.level]
                                     const classData = data().ClassData[user.skills[1].className]
                                     classData.skills.forEach(skill => {
-                                        if(skill.level === c.level){
+                                        if (skill.level === c.level) {
                                             user.unlockedSkills.push(skill.name)
                                             user.save()
                                         }
@@ -213,12 +244,13 @@ const checkDead = (room) => {
 
         room.meta.connected.forEach(o => {
             const user = getUser(o.username)
-            if(user && user.unlockedSkills && room.data.loot)
+            if (user && user.unlockedSkills && room.data.loot)
                 room.data.loot.forEach(skill => {
-                    if(!user.unlockedSkills.includes(skill) && !user.skills.find(s => s.name === skill)) {
+                    if (!user.unlockedSkills.includes(skill) && !user.skills.find(s => s.name === skill)) {
                         user.unlockedSkills.push(skill)
                         user.save()
-                    }})
+                    }
+                })
         })
     }
 
@@ -282,7 +314,6 @@ const changes = (username, changeId) => {
         return {changes: room.data.changes.slice(index + 1).reverse(), uiData: room.uiData(username)}
     }
 }
-
 
 
 module.exports = {RoomPipe, ability, turnIndex, changes}

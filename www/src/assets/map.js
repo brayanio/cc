@@ -3,7 +3,9 @@ export default {
         Lich: './src/assets/boss_lich.PNG'
     },
     mobs: {
-        Skeleton: './src/assets/mob_skeleton.PNG'
+        Skeleton: './src/assets/mob_skeleton.PNG',
+        Golem: './src/assets/mob_golem.PNG',
+        Lich: './src/assets/boss_lich.PNG'
     },
     skills: {
         Skeleton: './src/assets/skill_skeleton.PNG',

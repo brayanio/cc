@@ -10,8 +10,10 @@ module.exports = () => {
         ...require('./rarity.js'),
         ...require('./weapon.js'),
         ...require('./effects.js'),
+        Raids: require('./raids/module.js')
 
     })
     obj.EffectFn = require('./effects/module.js')
+
     return obj
 }
