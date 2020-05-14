@@ -200,8 +200,8 @@ const checkDead = (room) => {
                                     }
                                 c.exp += exp
                                 if (c.exp >= CLASS_EXP_TABLE[c.level]) {
-                                    c.level++
                                     c.exp -= CLASS_EXP_TABLE[c.level]
+                                    c.level++
                                     const classData = data().ClassData[user.skills[0].className]
                                     // console.log('LEVELS', classData.skills, c.level)
                                     classData.skills.forEach(skill => {

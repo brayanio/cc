@@ -44,7 +44,7 @@ const ability = (room, abilityName, abilityTarget) => {
     if(abilityTarget === 'self')
         target = room.username
 
-    console.log(target)
+    // console.log(target)
     pipe.send('ability', {username, target, ability: abilityName}, false)
 }
 
