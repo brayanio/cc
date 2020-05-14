@@ -315,5 +315,13 @@ const changes = (username, changeId) => {
     }
 }
 
+const startGame = (room) => {
+    let e = room.getMonster(room.data.turnOrder[room.data.turnIndex])
+    if(e)
+        monsterStartTurn(room)
+    else
+        userStartTurn(room)
+}
 
-module.exports = {RoomPipe, ability, turnIndex, changes}
+
+module.exports = {RoomPipe, ability, turnIndex, changes, startGame}

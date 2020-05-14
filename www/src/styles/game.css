@@ -4,6 +4,25 @@
 
 .game section aside{
     box-shadow: none;
+    border: none;
+}
+
+.game-players aside{
+    width: 200px;
+    margin: .5rem;
+    padding: .5rem;
+}
+
+.game-monsters aside{
+    width: 200px;
+    margin: .5rem;
+    padding: .5rem;
+}
+
+@media screen and (max-width: 1200px){
+    .game-monsters aside{
+        width: 140px;
+    }
 }
 
 .game .duration{

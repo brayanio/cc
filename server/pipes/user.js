@@ -14,7 +14,7 @@ const getUser = username => {
 
 const signup = (username, not_the_password) => {
     /*check storage, create user, save user*/
-    const user = storage.val().users && storage.val().users[username]
+    const user = storage.val().users ? storage.val().users[username] : null
     if(user)
         return {error: true, msg: 'User already exists'}
     const newUser = new User(username, not_the_password)
@@ -23,7 +23,7 @@ const signup = (username, not_the_password) => {
 
 const login = (username, not_the_password) => {
     /*check storage, create user, save user*/
-    const user = storage.val().users[username]
+    const user = storage.val().users ? storage.val().users[username] : null
     if(!user)
         return {error: true, msg: 'Incorrect Credentials'}
     if(user.not_the_password !== salt(not_the_password))

@@ -5,7 +5,9 @@ export default {
     mobs: {
         Skeleton: './src/assets/mob_skeleton.PNG',
         Golem: './src/assets/mob_golem.PNG',
-        Lich: './src/assets/boss_lich.PNG'
+        Zombie: './src/assets/mob_zombie.PNG',
+        Necrokitty: './src/assets/mob_necrokitty.PNG',
+        Slave: './src/assets/mob_slave.PNG'
     },
     skills: {
         Skeleton: './src/assets/skill_skeleton.PNG',

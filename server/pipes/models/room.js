@@ -95,6 +95,15 @@ module.exports = class {
         return this.monsters.find((monster) => monster.username === id)
     }
 
+    getConnectedId(id){
+        const monster = this.getMonster(id)
+        if(monster)
+            return monster
+        const user = getUser(id)
+        if(user)
+            return user
+    }
+
     userData() {
         const userPackets = this.meta.connected.map(o => getUser(o.username).packet())
         return userPackets

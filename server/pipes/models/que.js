@@ -19,6 +19,13 @@ module.exports = class {
         this.connected.push(user)
     }
 
+    /*
+        * Checking if the que is full
+        * Creating a room
+        * Connecting users
+        * Starting the first players turn
+        * Returns room created
+    */
     checkFull() {
         if (this.connected.length >= parseInt('' + this.playerCount)) {
             const roomCreated = new Room(this)
@@ -27,6 +34,9 @@ module.exports = class {
                 if(user.joinRoom)
                     user.joinRoom(roomCreated.id)
             })
+            
+            room.startGame(roomCreated)
+            
             return roomCreated
         }
     }

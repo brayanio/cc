@@ -1,8 +1,8 @@
-module.exports = [
-    ['Skeleton', 'Skeleton', 'Skeleton', 'Skeleton'],
+module.exports = [/* Slave | Skeleton | Zombie | Necrokitty | Golem */
+    ['Slave', 'Skeleton', 'Skeleton', 'Zombie'],
     ['Golem', 'Skeleton', 'Skeleton'],
-    ['Skeleton', 'Lich', 'Lich'],
-    ['Golem', 'Golem'],
-    ['Skeleton', 'Golem'],
+    ['Skeleton', 'Necrokitty', 'Slave'],
+    ['Necrokitty', 'Golem'],
+    ['Zombie', 'Golem', 'Slave'],
 ]
 

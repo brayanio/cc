@@ -9,9 +9,9 @@ module.exports = class {
     constructor(username, not_the_password) {
         this.username = username
         this.gold = 0
-        const loadedUser = storage.val()[username]
-        if(loadedUser && !not_the_password && loadedUser.password)
-            this.not_the_password = loadedUser.password
+        const loadedUser = storage.val().users ? storage.val().users[username] : null
+        if(loadedUser && !not_the_password && loadedUser.not_the_password)
+            this.not_the_password = loadedUser.not_the_password
         this.init()
         if (not_the_password) {
             this.not_the_password = salt(not_the_password)
@@ -40,6 +40,10 @@ module.exports = class {
     }
 
     init(){
+        if(!storage.val().users){
+            console.log('[user][creating storage user table]')
+            storage.change(o => o.users = {})
+        }
         let user = storage.val().users[this.username]
         if(!user)
             user = {

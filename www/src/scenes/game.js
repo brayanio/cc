@@ -12,10 +12,12 @@ export default () => nggt.create({
         if(!room)
             return ''
         return Prefabs.Join(
-                Prefabs.Section(
+                Prefabs.Container('section', ['game-players'],
                     Prefabs.Map(room.data.userPackets, (user) =>
                         Prefabs.Player(user)
                     ),
+                ),
+                Prefabs.Container('section', ['game-monsters'],
                     room.uiData.monsters 
                         ? Prefabs.Map(Object.keys(room.uiData.monsters), id => Prefabs.Monster(room, id))
                         : ''
