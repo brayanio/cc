@@ -156,7 +156,13 @@ module.exports = class {
             ],
             effects,
             health,
-            turnCounter: this.data.turnCounter,
+            turn: {
+                turnCounter: this.data.turnCounter,
+                turnOrder: this.data.turnOrder,
+                turnIndex: this.data.turnIndex,
+                yourTurn: this.data.turnOrder[this.data.turnIndex] === username,
+                current: this.data.turnOrder[this.data.turnIndex]
+            },
             ...optional
         }
     }

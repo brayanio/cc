@@ -139,13 +139,11 @@ const checkDead = (room) => {
             }
         })
     else if (room.meta.gameType === "raid") {
-
         room.teamB.forEach(username => {
             if (room.getMonster(username).stats.health <= 0) {
                 room.remove('teamB', username)
                 dead[username] = room.getMonster(username)
             }
-
         })
         if (room.waves && room.teamB.length === 0 && room.waves.length > 0) {
             /// Add Intermission Ad Here

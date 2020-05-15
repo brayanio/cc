@@ -3,11 +3,8 @@ import PvpService from '../services/pvp.js'
 
 const pvp = PvpService.pipe
 
-export default (room) => Layout.DataObj(pvp.turnIndex, turnIndex => {
-    let current
-    if(turnIndex)
-        current = room.data.turnOrder[turnIndex.turnIndex]
-    if(current === room.username)
-        current = 'Your'
-    return Layout.El('h1', current || '... ', ' Turn')
-})
+export default (room) => {
+    if(!room || !room.uiData || !room.uiData.turn)
+        return '...'
+    return Layout.El('h1', (room.uiData.turn.yourTurn ? 'Your' : room.uiData.turn.current) + ' Turn')
+}

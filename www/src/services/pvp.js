@@ -51,8 +51,8 @@ const ability = (room, abilityName, abilityTarget) => {
 pipe.changes.onChange(o => {
     if(o && o.changes[o.changes.length - 1])
         pipe.currentChangeId.change(o.changes[0].id)
-    if(o && o.uiData.turnCounter > pipe.turnCounter.val())
-        pipe.turnCounter.change(o.uiData.turnCounter)
+    if(o && o.uiData.turn.turnCounter > pipe.turnCounter.val())
+        pipe.turnCounter.change(o.uiData.turn.turnCounter)
 })
 
 pipe.cacheChanges.onChange(ar => console.log(ar))

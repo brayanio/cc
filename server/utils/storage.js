@@ -17,6 +17,8 @@ let dataobj = nggt.dataObj(obj)
 
 const save = () => {
   const obj = dataobj.val()
+  if(!fs.existsSync(WWW))
+    fs.mkdirSync(WWW)
   fs.writeFileSync(resource('storage.json'), JSON.stringify(obj), 'utf8')
   console.log('[storage][saved]')
 }

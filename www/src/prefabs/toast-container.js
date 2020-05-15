@@ -6,7 +6,7 @@ import PvpService from '../services/pvp.js'
 const pvp = PvpService.pipe
 
 export default () => Layout.DataObj(pvp.cacheChanges, ar => (ar)
-    ? Layout.Map(ar.filter((o) => o.uiData.turnCounter === pvp.turnCounter.val()), (o) =>
+    ? Layout.Map(ar.filter((o) => o.uiData.turn.turnCounter === pvp.turnCounter.val()), (o) =>
         Layout.Map(o.changes, (change) =>
             Layout.Join(`</br>`,
                 Layout.Article(

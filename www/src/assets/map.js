@@ -16,6 +16,6 @@ export default {
         "Battle Axe": './src/assets/skill_battleaxe.PNG'
     },
     pets: {
-        Skeleton: './src/assets/mob_skeleton.PNG'
+        Skeleton: './src/assets/pet_skeleton.PNG'
     }
 }
