@@ -4,6 +4,34 @@
 @import url("./styles/lobby.css");
 /* @import url("../libs/sprite/styles/sprite.css"); */
 
+main{
+  animation: change-scene 149ms
+}
+@keyframes change-scene{
+  0%{
+    opacity: 0;
+    transform: translateY(-10px) scale(1.01);
+  }
+  100%{
+    opacity: 1;
+    transform: translateY(0px) scale(1);
+  }
+}
+
+.nggt-exit{
+  animation: end-scene 149ms
+}
+@keyframes end-scene{
+  0%{
+    opacity: 1;
+    transform: translateY(0px)  scale(1);
+  }
+  100%{
+    opacity: 0;
+    transform: translateY(10px)  scale(.99);
+  }
+}
+
 button {
   padding: 0.25rem 1rem;
   margin: 2px;

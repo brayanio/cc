@@ -13,7 +13,7 @@ const Data = (name, plural, map, ...vals) => {
     return {name, level, speed, hp, damageDie, attack, loot, abilities, tags}
   }
   
-  let MonsterData = Data('Monster', 'Monsters', (data, e) => data[nospace(e.name)] = e,
+  let MonsterData = Data('Boss', 'Bosses', (data, e) => data[nospace(e.name)] = e,
     monster('Lich', 3, 75, 3, 4, 8, {}, [], 'undead'), // boss
   )
   

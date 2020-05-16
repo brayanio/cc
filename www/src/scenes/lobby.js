@@ -18,10 +18,13 @@ export default () => nggt.create({
     isRoot: true,
     classList: ['lobby'],
     template: Prefabs.Join(
+        Prefabs.El('nav',
+            `<a href="#/"><img src="./src/assets/logo_full.PNG"></a>`,
+            Prefabs.List('ul', 
+                `<a href="#/character"><i>Character</i></a>`
+            )
+        ),
         Prefabs.El('h1', Prefabs.DataObj(AccountService.pipe.account, account => account ? account.map : '... Lobby')),
-        '<a href="#/skills">Skills</a>',
-        '<br>',
-        '<br>',
         Prefabs.Tabs(tab,
             Prefabs.Tab('btn',
                 Prefabs.Section(

@@ -1,6 +1,6 @@
 import CorePipe from './pipes/core.js'
 
-const EXIT_ANIMATION = 0 //149
+const EXIT_ANIMATION = 149 //149
 
 const router = (routes, child) => {
   let routeName = location.hash
