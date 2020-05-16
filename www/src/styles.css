@@ -78,6 +78,7 @@ sup.health{
   background-color: transparent;
   color: rgba(0,0,0,0.8);
   border: 4px;
+  outline: none;
 }
 
 .skill-bar button img{
@@ -105,6 +106,10 @@ sup.health{
   /*background-color: rgba(0,0,0,0);*/
   transform: scale(1.2);
   /*box-shadow: none;*/
+}
+.skill-bar button:focus img{
+  transform: scale(1.2);
+  box-shadow: 0px 5px 5px rgba(0, 0, 0, 0.3), inset 0px -5px 5px rgba(0, 0, 0, 0.3);
 }
 .skill-bar button img:active{
   transform: scale(1.2) translateY(-10px);
