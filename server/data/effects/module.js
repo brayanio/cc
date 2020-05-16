@@ -8,4 +8,7 @@ module.exports = {
   Bleed: require('./bleed.js'),
   NecromancerBonus: require('./class-effects/necromancer-bonus.js'),
   NecromancerMulti: require('./class-effects/necromancer-multi.js'),
+  Slave: require('./slave.js'),
+  FleshGolem: require('./flesh-golem.js'),
+  Necrokitty: require('./necrokitty.js')
 }

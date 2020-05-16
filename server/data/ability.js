@@ -23,12 +23,17 @@ const skillAbility = (name, cooldown, target, className, ...effects) => {
 }
 let AbilityData = Data('Ability', 'Abilities', (data, e) => data[nospace(e.name)] = e,
     weaponAbility('Battle Axe', 'attack', 'enemy', effects().Effect.BattleAxe),
-    //armor
+    // Armor
     armorAbility('Breastplate', 5, 'self', effects().Effect.Breastplate),
-    //skills
+    armorAbility('Mummy Wraps', 5, 'self', effects().Effect.Necrokitty, effects().Effect.Breastplate),
+    // Skills
     skillAbility('Skeleton', 0, 'self','Necromancer', effects().Effect.Skeleton, effects().Effect.Skeleton),
     skillAbility('Fatigue', 3, 'enemy', 'Necromancer', effects().Effect.Fatigue),
-    // skillAbility('Rage', 3, 'self', effects().Effect.Rage, effects().Effect.Fury, effects().Effect.Fury),
-    // skillAbility('Gore', 0, 'enemy', effects().Effect.Bleed)
+    // Boss
+
+    //Lich
+    skillAbility('Release Slave', 1, 'enemy', 'Boss', effects().Effect.Slave),
+    skillAbility('Flesh Golem', 4, 'enemy', 'Boss', effects().Effect.FleshGolem),
+    skillAbility('AOE Fatigue', 2, 'aoe-enemy', 'Boss', effects().Effect.Fatigue)
 )
 module.exports = {...AbilityData}

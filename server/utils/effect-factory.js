@@ -1,4 +1,5 @@
 const guid = require('./guid.js')
+const data = require('../data/module.js')
 
 const buff = (effect, is, aint) => {
     switch(effect.start) {
@@ -82,6 +83,20 @@ const changeMonster = (room, modified, changes)=> room.data.changes.push({
     changes
 })
 
+const summonMonster = (room, team, monsterName) => {
+  const monster = data().Monster[monsterName]
+  room[team].push(monster.username)
+  room.data.turnOrder.push(monster.username)
+  room.monsters.push(monster)
+  return monster
+}
+
+const addEffect = (effectName, username, targetUsername, abilityName) => {
+  const effect = data().Effect[effectName]
+  effect.birth = {username, target: targetUsername}
+  effect.ability = abilityName || effectName
+}
+
 module.exports = {
     guid,
     attack,
@@ -90,5 +105,7 @@ module.exports = {
     heal,
     weaponAttack,
     buff,
-    monsterAttack
+    monsterAttack,
+    summonMonster,
+    addEffect
 }

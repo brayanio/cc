@@ -9,10 +9,12 @@ const getUser = username => UserPipe.getUser(username)
 const joinQue = (username, queName, playerCount) => {
     const check = checkQue(username)
     if (!check.error) return check
-    if (QuePipe[queName] && QuePipe[queName]) {
+    if (QuePipe[queName] && QuePipe[queName] && QuePipe[queName].val()) {
         const que = QuePipe[queName].val()
         que.connect(username, getUser(username).map)
         const roomCreated = que.checkFull(username, playerCount)
+        if(roomCreated)
+          QuePipe[queName].change(null)
         return roomCreated.packet(username)
     }
     const queCreated = new Que(queName, username, playerCount, getUser(username).map)

@@ -9,7 +9,7 @@ const RoomPipe = RoomService.pipe
 // fns
 const joinQuePVP = () => RoomService.joinQue('pvp', 2)
 const joinQuePVE = () => RoomService.joinQue('pve', 1)
-const joinQueBoss = () => RoomService.joinQue('raid', 3)
+const joinQueBoss = () => RoomService.joinQue('raid', 2)
 const leaveQue = () => RoomService.leaveQue()
 const tab = nggt.dataObj('btn')
 

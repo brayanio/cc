@@ -15,7 +15,8 @@ const armor = (name, hp, rarity, speed, level, ability) => {
 }
 
 let armorData = Data('Armor', 'Armors', (data, e) => data[nospace(e.name)] = e,
-    armor('Breastplate', 40, 'Common', 100, 1, abilityData.Ability.Breastplate)
+    armor('Breastplate', 40, 'Common', 100, 1, abilityData.Ability.Breastplate),
+    armor('Mummy Wraps', 60, 'Legendary', 169, 3, abilityData.Ability.MummyWraps)
 )
 /*
 Title.HelloWorld === 'Hello World'

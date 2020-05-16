@@ -42,12 +42,15 @@ module.exports = class {
             this.teamA.forEach(username => getUser(username).applyPassives(this, getUser(username), getUser(username)))
         }
         if(que.name === 'raid'){
-           let raids = data().Raids[this.meta.mapName]
-
-            const raid1 = raids[Math.floor(Math.random()*raids.length)]
-            const raid2 = raids[Math.floor(Math.random()*raids.length)]
-            const raid3 = raids[Math.floor(Math.random()*raids.length)]
-            const boss = raids[Math.floor(Math.random()*raids.length)]
+            let raids = data().Raids[this.meta.mapName]
+            const boss = raids[0]
+            raids.filter = raids.filter( (wave,i) =>i !== 0)
+            const raid1 = raids[Math.floor(Math.random()*raids.length-1)+1]
+            raids = data().Raids[this.meta.mapName]
+            const raid2 = raids[Math.floor(Math.random()*raids.length-1)+1]
+            raids = data().Raids[this.meta.mapName]
+            const raid3 = raids[Math.floor(Math.random()*raids.length-1)+1]
+            
 
             raid1.forEach(monster => this.monsters.push(new Monster(data().Monster[monster])))
             this.teamA = que.connected.map(o => o.username)
@@ -58,7 +61,7 @@ module.exports = class {
                 ...this.monsters.map(monster => {return {username: monster.username, speed: monster.speed}}),
             ]
 
-            this.waves = [raid2, raid3, boss]
+            this.waves = [boss, raid3, raid2]
             this.data.turnOrder = units.sort((o1, o2) => {
                 if (o1.speed < o2.speed)
                     return 1

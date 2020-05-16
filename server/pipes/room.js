@@ -43,7 +43,7 @@ const ability = (username, t, abilityName) => {
     user.stats.cooldowns[ability.name] = ability.cooldown
     ability.effects = ability.effects.filter(effect => {
         effect.ability = nospace(ability.name)
-        effect.birth = {username, target: t, isUser: room.meta.gameType === 'pvp'}
+        effect.birth = { username, target: t, isUser: room.meta.gameType === 'pvp' }
         runEffectEvent('instant', effect, room, user, target)
         runEffectEvent('buff', effect, room, user, target)
         return effect.start !== 'instant' && !effect.tags.includes('passive')
@@ -123,125 +123,140 @@ const turnOver = (room) => {
 
     room.data.turnCounter++
 }
-const checkDead = (room) => {
-    let dead = {}
-    room.teamA.forEach(username => {
-        if (getUser(username).stats.health <= 0) {
-            room.remove('teamA', username)
-            dead[username] = getUser(username)
-        }
-    })
-    if (room.meta.gameType === 'pve')
+
+const checkDead_pve = (room, dead) => {
+    if (room.meta.gameType === 'pve') 
         room.teamB.forEach(username => {
             if (room.getMonster(username).stats.health <= 0) {
                 room.remove('teamB', username)
                 dead[username] = room.getMonster(username)
+                checkExp(room, dead[username])
+                checkLoot(room, dead[username])
             }
         })
-    else if (room.meta.gameType === "raid") {
+}
+
+const checkDead_raid = (room, dead) => {
+    if (room.meta.gameType === "raid") {
         room.teamB.forEach(username => {
             if (room.getMonster(username).stats.health <= 0) {
                 room.remove('teamB', username)
                 dead[username] = room.getMonster(username)
+                checkExp(room, dead[username])
+                checkLoot(room, dead[username])
             }
         })
         if (room.waves && room.teamB.length === 0 && room.waves.length > 0) {
             /// Add Intermission Ad Here
-            console.log(room.waves[0], 'Start')
-            room.monsters = room.waves.pop().map(monster => {
-                console.log(monster,data().Monster[monster], 'hererererer')
-            const x = new Monster(data().Monster[monster])
-
-                return x
-            })
-            console.log(room.waves, 'End')
+            room.monsters = room.waves.pop().map(monster => new Monster(data().Monster[monster]))
             room.teamB = room.monsters.map(monster => monster.username)
-            room.data.turnOrder = [...room.teamA.map(username => getUser(username)),...room.monsters].sort((o1, o2) => {
+            room.data.turnOrder = [...room.teamA.map(username => getUser(username)), ...room.monsters].sort((o1, o2) => {
                 if (o1.speed < o2.speed)
                     return 1
                 if (o1.speed > o2.speed)
                     return -1
                 return 0
             }).map(unit => unit.username)
-            console.log('TURN ORDER', room.data.turnOrder)
+            // console.log('TURN ORDER', room.data.turnOrder)
             room.data.turnIndex = 0
             runTurn(room)
         }
-    } else
+    }
+}
+
+const checkDead_pvp = (room, team, dead) => {
+    if (room.meta.gameType === "pvp") {
         room.teamB.forEach(username => {
             if (getUser(username).stats.health <= 0) {
                 room.remove('teamB', username)
                 dead[username] = getUser(username)
+                checkLoot(room, dead[username])
             }
         })
+    }
+}
+
+const checkLevel = (user, i, exp) => {
+    if (user.skills[i]) { //level up skill 1
+        let c = user.classData[user.skills[i].className]
+        if (!c)
+            c = user.classData[user.skills[i].className] = {
+                level: 1,
+                exp: 0
+            }
+        c.exp += exp
+        if (c.exp >= CLASS_EXP_TABLE[c.level]) {
+            c.exp -= CLASS_EXP_TABLE[c.level]
+            c.level++
+            const classData = data().ClassData[user.skills[i].className]
+            // console.log('LEVELS', classData.skills, c.level)
+            classData.skills.forEach(skill => {
+                if (skill.classLevel === c.level) {
+                    user.unlockedSkills.push(skill.name)
+                    // console.log('LEVELED UP', user.unlockedSkills)
+                    user.save()
+                }
+            })
+        }
+    }
+}
+
+const checkExp = (room, deadUser) => {
+    const exp = MONSTER_EXP_TABLE[deadUser.monster.level]
+    // console.log('Check Dead - works', deadUser)
+    room.teamA.forEach(username => {
+        const user = getUser(username)
+        checkLevel(user, 0, exp)
+        checkLevel(user, 1, exp)
+    })
+}
+
+const checkLoot = (room, deadUser) => {
+    if (deadUser.monster) {
+        if(deadUser.monster.loot)
+            Object.keys(deadUser.monster.loot).forEach(skill => {
+                if(room.data.loot && room.data.loot.includes(skill))
+                    return null
+                const chance = deadUser.monster.loot[skill]
+                const roll = Math.floor(Math.random() * 100)
+                if (roll <= chance)
+                    !room.data.loot ? room.data.loot = [skill] : room.data.loot.push(skill)
+            })
+        
+        if(deadUser.monster.bossLoot)
+            Object.keys(deadUser.monster.bossLoot).forEach(item => {
+                if(room.data.bossLoot && room.data.bossLoot.includes(item))
+                    return null
+                const chance = deadUser.monster.bossLoot[item]
+                const roll = Math.floor(Math.random() * 100)
+                if (roll <= chance)
+                    !room.data.bossLoot ? room.data.bossLoot = [item] : room.data.bossLoot.push(item)
+            })
+    }
+}
+
+const checkDead = (room) => {
+    let dead = {}
+    // checkDead for teamA (always a player)
+    room.teamA.forEach(username => {
+        if (getUser(username).stats.health <= 0) {
+            room.remove('teamA', username)
+            dead[username] = getUser(username)
+        }
+    })
+    checkDead_pve(room, dead)
+    checkDead_raid(room, dead)
+    checkDead_pvp(room, dead)
+
 
     if (room.teamB.length === 0 && room.teamA.length === 0) {
         room.data.winner = 'draw'
     }
     if (room.teamB.length === 0) {
         room.data.winner = 'teamA'
-
-        Object.values(dead).forEach(deadUser => {
-                if (deadUser.monster)
-                    Object.keys(deadUser.monster.loot).forEach(skill => {
-                        const chance = deadUser.monster.loot[skill]
-                        const roll = Math.floor(Math.random() * 100)
-                        const exp = MONSTER_EXP_TABLE[deadUser.monster.level]
-                        room.teamA.forEach(username => {
-                            const user = getUser(username)
-                            if (user.skills[0]) {
-                                let c = user.classData[user.skills[0].className]
-                                if (!c)
-                                    c = user.classData[user.skills[0].className] = {
-                                        level: 1,
-                                        exp: 0
-                                    }
-                                c.exp += exp
-                                if (c.exp >= CLASS_EXP_TABLE[c.level]) {
-                                    c.exp -= CLASS_EXP_TABLE[c.level]
-                                    c.level++
-                                    const classData = data().ClassData[user.skills[0].className]
-                                    // console.log('LEVELS', classData.skills, c.level)
-                                    classData.skills.forEach(skill => {
-                                        if (skill.classLevel === c.level) {
-                                            user.unlockedSkills.push(skill.name)
-                                            // console.log('LEVELED UP', user.unlockedSkills)
-                                            user.save()
-                                        }
-                                    })
-                                }
-                            }
-                            if (user.skills[1]) {
-                                user.skills[1]
-                                c = user.classData[user.skills[1].className]
-                                if (!c)
-                                    c = user.classData[user.skills[1].className] = {
-                                        level: 1,
-                                        exp: 0
-                                    }
-                                c.exp += exp
-                                if (c.exp >= CLASS_EXP_TABLE[c.level]) {
-                                    c.level++
-                                    c.exp -= CLASS_EXP_TABLE[c.level]
-                                    const classData = data().ClassData[user.skills[1].className]
-                                    classData.skills.forEach(skill => {
-                                        if (skill.level === c.level) {
-                                            user.unlockedSkills.push(skill.name)
-                                            user.save()
-                                        }
-                                    })
-                                }
-                            }
-                        })
-                        // console.log(roll, chance, roll <= chance, 'roll chance here')
-                        if (roll <= chance)
-                            !room.data.loot ? room.data.loot = [skill] : room.data.loot.push(skill)
-                    })
-            }
-        )
-
         room.meta.connected.forEach(o => {
             const user = getUser(o.username)
+            // Skill Loot
             if (user && user.unlockedSkills && room.data.loot)
                 room.data.loot.forEach(skill => {
                     if (!user.unlockedSkills.includes(skill) && !user.skills.find(s => s.name === skill)) {
@@ -249,6 +264,15 @@ const checkDead = (room) => {
                         user.save()
                     }
                 })
+            // Item Loot
+            if (user && user.inventory && room.data.bossLoot) {
+                room.data.bossLoot.forEach(item => {
+                    if (!user.inventory.includes(item) && !user.armor.name === item && !user.weapon.name === item) {
+                        user.inventory.push(item)
+                        user.save()
+                    }
+                })
+            }
         })
     }
 
@@ -256,9 +280,9 @@ const checkDead = (room) => {
         room.data.winner = 'teamB'
     if (room.data.winner)
         room.data.turnIndex = -69
+    // Object.keys(dead).forEach((u) => data[u].disconnect ? data[u].disconnect() : null)
     room.data.dead = !room.data.dead ? Object.keys(dead) : room.data.dead.concat(Object.keys(dead))
-// Object.keys(dead).forEach((u) => data[u].disconnect ? data[u].disconnect() : null)
-// console.log(room.data.winner, room.teamA, room.teamB, room.data.dead, 'he;;p[]=asdfg[g')
+    // console.log(room.data.winner, room.teamA, room.teamB, room.data.dead, 'he;;p[]=asdfg[g')
 }
 const userStartTurn = (room) => {
     const currentUser = getUser(room.data.turnOrder[room.data.turnIndex])
@@ -285,17 +309,17 @@ const turnIndex = (username, changeId) => {
 
         if (room.data.changes.length > 0) {
             if (!changeId)
-                return {turnIndex: Math.random()}
+                return { turnIndex: Math.random() }
             else {
                 let index
                 room.data.changes.find((e, i) => changeId === e.id ? index = i : null)
 
                 if (index === room.data.changes.length - 1)
-                    return {turnIndex: room.data.turnIndex}
-                return {turnIndex: Math.random()}
+                    return { turnIndex: room.data.turnIndex }
+                return { turnIndex: Math.random() }
             }
         }
-        return {turnIndex: room.data.turnIndex}
+        return { turnIndex: room.data.turnIndex }
     }
 }
 
@@ -307,19 +331,19 @@ const changes = (username, changeId) => {
         room.data.changes.find((e, i) => changeId === e.id ? index = i : null)
 
         if (!index)
-            return {changes: JSON.parse(JSON.stringify(room.data.changes)).reverse(), uiData: room.uiData(username)}
+            return { changes: JSON.parse(JSON.stringify(room.data.changes)).reverse(), uiData: room.uiData(username) }
 
-        return {changes: room.data.changes.slice(index + 1).reverse(), uiData: room.uiData(username)}
+        return { changes: room.data.changes.slice(index + 1).reverse(), uiData: room.uiData(username) }
     }
 }
 
 const startGame = (room) => {
     let e = room.getMonster(room.data.turnOrder[room.data.turnIndex])
-    if(e)
+    if (e)
         monsterStartTurn(room)
     else
         userStartTurn(room)
 }
 
 
-module.exports = {RoomPipe, ability, turnIndex, changes, startGame}
+module.exports = { RoomPipe, ability, turnIndex, changes, startGame }
